@@ -5,7 +5,7 @@ PLUGIN = {}
 --- Plugin name
 PLUGIN.name = "dotnet"
 --- Plugin version
-PLUGIN.version = "0.1.1"
+PLUGIN.version = "0.2.0"
 --- Plugin homepage
 PLUGIN.homepage = "https://github.com/version-fox/vfox-dotnet"
 --- Plugin license, please choose a correct license according to your needs.
@@ -36,5 +36,7 @@ NOTE:
 PLUGIN.manifestUrl = "https://github.com/version-fox/vfox-dotnet/releases/download/manifest/manifest.json"
 -- Some things that need user to be attention!
 PLUGIN.notes = {
-    "",
+  -- https://github.com/dotnet/install-scripts
+  -- https://github.com/dotnet/core/issues/9671
+  "",
 }
