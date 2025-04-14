@@ -1,4 +1,3 @@
-
 local http = require("http")
 local json = require("json")
 local strings = require("vfox.strings")
@@ -13,7 +12,13 @@ util.BARE_URL = "https://dotnet.microsoft.com"
 util.RELEASE_META_BASE_URL = "https://builds.dotnet.microsoft.com/dotnet/release-metadata"
 util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL.."/releases-index.json"
 
+-- Cache system info since it won't change during execution
+local cachedSysInfo = nil
 function util:getOsTypeAndArch()
+    if cachedSysInfo then
+        return cachedSysInfo
+    end
+
     local osType = RUNTIME.osType
     local archType = RUNTIME.archType
     if RUNTIME.osType == "darwin" then
@@ -30,9 +35,11 @@ function util:getOsTypeAndArch()
     elseif RUNTIME.archType == "386" then
         archType = "x86"
     end
-    return {
+
+    cachedSysInfo = {
         osType = osType, archType = archType
     }
+    return cachedSysInfo
 end
 
 --- parse semver
@@ -56,9 +63,9 @@ function util:parseVersion(versionStr)
     end
 
     -- 构建 channelVersion 和 releaseVersion
-    local majorVersion = string.format("%d", major)
-    local channelVersion = string.format("%d.%d", major, minor)
-    local releaseVersion = string.format("%d.%d.%d", major, minor, patch)
+    local majorVersion = tostring(major)
+    local channelVersion = major .. "." .. minor
+    local releaseVersion = major .. "." .. minor .. "." .. patch
 
     return {
         major = major,
@@ -78,12 +85,15 @@ function util:getAvailableByUserVersion(userVersion)
     local resp, err = http.get({
         url = util.RELEASE_META_INDEX_URL
     })
+
     if err ~= nil or resp.status_code ~= 200 then
         return {}
     end
-    local body = json.decode(resp.body)
 
+    local body = json.decode(resp.body)
+    local releases_index = body["releases-index"]
     local result = {}
+    local has_prefix = strings.has_prefix
 
     --- if user provide version, filter by it
     if userVersion then
@@ -96,20 +106,22 @@ function util:getAvailableByUserVersion(userVersion)
             targetChannel = userVersionInfo.majorVersion
         end
 
-        for _, channel in ipairs(body["releases-index"]) do
-            if strings.has_prefix(channel["channel-version"], targetChannel) then
+        for _, channel in ipairs(releases_index) do
+            if has_prefix(channel["channel-version"], targetChannel) then
                 local releaseInChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
-                for _, info in ipairs(releaseInChannel) do
-                    table.insert(result, info)
+                -- Preallocate space in result table
+                for i=1, #releaseInChannel do
+                    result[#result + 1] = releaseInChannel[i]
                 end
-                do break end
+                break
             end
         end
     else
-        for _, channel in ipairs(body["releases-index"]) do
+        for _, channel in ipairs(releases_index) do
             local releaseInChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
-            for _, info in ipairs(releaseInChannel) do
-                table.insert(result, info)
+            -- Preallocate space in result table
+            for i=1, #releaseInChannel do
+                result[#result + 1] = releaseInChannel[i]
             end
         end
     end
@@ -122,6 +134,10 @@ end
 --- @return table Descriptions of available versions and accompanying tool descriptions
 function util:getAvailableByChannelReleaseUrl(url)
     local sysInfo = util:getOsTypeAndArch()
+    local osType = sysInfo.osType
+    local archType = sysInfo.archType
+    local rid = osType .. "-" .. archType
+    local has_suffix = strings.has_suffix
 
     local resp, err = http.get({
         url = url
@@ -131,9 +147,13 @@ function util:getAvailableByChannelReleaseUrl(url)
     end
     local body = json.decode(resp.body)
 
+    local isLts = body["release-type"] == "lts"
+    local releases = body["releases"]
     local result = {}
-    for _, release in ipairs(body["releases"]) do
-        local rid = sysInfo.osType .. "-" .. sysInfo.archType
+
+    result = {}
+
+    for _, release in ipairs(releases) do
         local versionInfo = {
             --- 版本号
             --- 9.0.0-rc.1 / 9.0.2
@@ -146,39 +166,39 @@ function util:getAvailableByChannelReleaseUrl(url)
             sha512 = "",
         }
 
-        -- security mean has CVE
-        if (release["security"]) then
-            versionInfo["note"] = versionInfo["note"] .. "not-secure"
-        else
-            versionInfo["note"] = versionInfo["note"] .. "secure"
+        -- Build note
+        local noteTable = {}
+        if isLts then
+            table.insert(noteTable, "LTS")
         end
 
-        --- "sdk": {
-        ---     "version": "2.1.300-preview1-008174",
-        ---     "version-display": "2.1.300-preview1",
-        ---     "runtime-version": "2.1.0-preview1-26216-03",
-        ---     "files": []
-        --- }
+        -- if security is true then this release contains fixes for security issues
+        if release["security"] then
+            if #noteTable > 0 then
+                table.insert(noteTable, " - ")
+            end
+            table.insert(noteTable, "Security Patch")
+        end
 
-        versionInfo["note"] = versionInfo["note"] .. ", " .. release["release-date"] --- .. ", C# " .. release["sdk"]["csharp-version"]
+        versionInfo.note = table.concat(noteTable)
 
         --- sdk mean contain latest sdk version
         local latestSdk = release["sdk"]
         local files = latestSdk["files"]
         for _, file in ipairs(files) do
             -- only need Binaries, not installer
-            if file.rid == rid and (strings.has_suffix(file.url, ".tar.gz") or strings.has_suffix(file.url, ".zip")) then
+            if file.rid == rid and (has_suffix(file.url, ".tar.gz") or has_suffix(file.url, ".zip")) then
                 versionInfo.url = file.url
                 versionInfo.sha512 = file.hash
                 versionInfo.addition = {
-                    { name = file.name, version = latestSdk["version"] }
+                    { name = "SDK", version = latestSdk["version"] }
                 }
-                --do break end
+                break
             end
         end
 
-        if (string.len(versionInfo.url) > 0) then
-            table.insert(result, versionInfo)
+        if versionInfo.url ~= "" then
+            result[#result + 1] = versionInfo
         end
     end
 
