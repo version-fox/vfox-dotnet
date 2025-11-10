@@ -10,7 +10,7 @@ function PLUGIN:PreInstall(ctx)
     local releases = util:getAvailableByUserVersion(ctx.version)
 
     for _, release in ipairs(releases) do
-        if strings.has_prefix(release.version, ctx.version) then
+        if strings.has_prefix(release.addition[1].version, ctx.version) then
             return release
         end
     end
