@@ -1,0 +1,60 @@
+{
+  "channel-version": "8.0",
+  "release-type": "lts",
+  "releases": [
+    {
+      "release-version": "8.0.34",
+      "release-date": "2026-11-10",
+      "security": true,
+      "runtime": {
+        "version": "8.0.34",
+        "files": [
+          { "name": "dotnet-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Runtime/8.0.34/dotnet-runtime-8.0.34-linux-x64.tar.gz", "hash": "runtime-hash-34" },
+          { "name": "dotnet-runtime-osx-arm64.tar.gz", "rid": "osx-arm64", "url": "https://example.invalid/Runtime/8.0.34/dotnet-runtime-8.0.34-osx-arm64.tar.gz", "hash": "runtime-osx-hash-34" },
+          { "name": "dotnet-runtime-win-x64.zip", "rid": "win-x64", "url": "https://example.invalid/Runtime/8.0.34/dotnet-runtime-8.0.34-win-x64.zip", "hash": "runtime-win-hash-34" }
+        ]
+      },
+      "sdk": {
+        "version": "8.0.428",
+        "files": [
+          { "name": "dotnet-sdk-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Sdk/8.0.428/dotnet-sdk-8.0.428-linux-x64.tar.gz", "hash": "sdk-hash-34" },
+          { "name": "dotnet-sdk-osx-arm64.tar.gz", "rid": "osx-arm64", "url": "https://example.invalid/Sdk/8.0.428/dotnet-sdk-8.0.428-osx-arm64.tar.gz", "hash": "sdk-osx-hash-34" },
+          { "name": "dotnet-sdk-win-x64.zip", "rid": "win-x64", "url": "https://example.invalid/Sdk/8.0.428/dotnet-sdk-8.0.428-win-x64.zip", "hash": "sdk-win-hash-34" }
+        ]
+      },
+      "aspnetcore-runtime": {
+        "version": "8.0.34",
+        "files": [
+          { "name": "aspnetcore-runtime-composite-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/aspnetcore/Runtime/8.0.34/aspnetcore-runtime-composite-8.0.34-linux-x64.tar.gz", "hash": "composite-hash-34" },
+          { "name": "aspnetcore-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/aspnetcore/Runtime/8.0.34/aspnetcore-runtime-8.0.34-linux-x64.tar.gz", "hash": "aspnet-hash-34" },
+          { "name": "dotnet-hosting-win.exe", "rid": "", "url": "https://example.invalid/aspnetcore/Runtime/8.0.34/dotnet-hosting-8.0.34-win.exe", "hash": "hosting-hash-34" },
+          { "name": "aspnetcore-runtime-osx-arm64.tar.gz", "rid": "osx-arm64", "url": "https://example.invalid/aspnetcore/Runtime/8.0.34/aspnetcore-runtime-8.0.34-osx-arm64.tar.gz", "hash": "aspnet-osx-hash-34" },
+          { "name": "aspnetcore-runtime-win-x64.zip", "rid": "win-x64", "url": "https://example.invalid/aspnetcore/Runtime/8.0.34/aspnetcore-runtime-8.0.34-win-x64.zip", "hash": "aspnet-win-hash-34" }
+        ]
+      }
+    },
+    {
+      "release-version": "8.0.8",
+      "release-date": "2024-09-10",
+      "security": false,
+      "runtime": {
+        "version": "8.0.8",
+        "files": [
+          { "name": "dotnet-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Runtime/8.0.8/dotnet-runtime-8.0.8-linux-x64.tar.gz", "hash": "runtime-hash-8" }
+        ]
+      },
+      "sdk": {
+        "version": "8.0.403",
+        "files": [
+          { "name": "dotnet-sdk-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Sdk/8.0.403/dotnet-sdk-8.0.403-linux-x64.tar.gz", "hash": "sdk-hash-8" }
+        ]
+      },
+      "aspnetcore-runtime": {
+        "version": "8.0.8",
+        "files": [
+          { "name": "aspnetcore-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/aspnetcore/Runtime/8.0.8/aspnetcore-runtime-8.0.8-linux-x64.tar.gz", "hash": "aspnet-hash-8" }
+        ]
+      }
+    }
+  ]
+}

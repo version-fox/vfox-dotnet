@@ -1,0 +1,52 @@
+{
+  "channel-version": "9.0",
+  "release-type": "sts",
+  "releases": [
+    {
+      "release-version": "9.0.0",
+      "release-date": "2024-11-12",
+      "security": false,
+      "runtime": {
+        "version": "9.0.0",
+        "files": [
+          { "name": "dotnet-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Runtime/9.0.0/dotnet-runtime-9.0.0-linux-x64.tar.gz", "hash": "runtime-hash-9" }
+        ]
+      },
+      "sdk": {
+        "version": "9.0.101",
+        "files": [
+          { "name": "dotnet-sdk-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Sdk/9.0.101/dotnet-sdk-9.0.101-linux-x64.tar.gz", "hash": "sdk-hash-9" }
+        ]
+      },
+      "aspnetcore-runtime": {
+        "version": "9.0.0",
+        "files": [
+          { "name": "aspnetcore-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/aspnetcore/Runtime/9.0.0/aspnetcore-runtime-9.0.0-linux-x64.tar.gz", "hash": "aspnet-hash-9" }
+        ]
+      }
+    },
+    {
+      "release-version": "9.0.0-rc.2",
+      "release-date": "2024-09-24",
+      "security": false,
+      "runtime": {
+        "version": "9.0.0-rc.2",
+        "files": [
+          { "name": "dotnet-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Runtime/9.0.0-rc.2/dotnet-runtime-9.0.0-rc.2-linux-x64.tar.gz", "hash": "runtime-hash-rc2" }
+        ]
+      },
+      "sdk": {
+        "version": "9.0.100-rc.2.24474.11",
+        "files": [
+          { "name": "dotnet-sdk-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/Sdk/9.0.100-rc.2.24474.11/dotnet-sdk-9.0.100-rc.2.24474.11-linux-x64.tar.gz", "hash": "sdk-hash-rc2" }
+        ]
+      },
+      "aspnetcore-runtime": {
+        "version": "9.0.0-rc.2",
+        "files": [
+          { "name": "aspnetcore-runtime-linux-x64.tar.gz", "rid": "linux-x64", "url": "https://example.invalid/aspnetcore/Runtime/9.0.0-rc.2/aspnetcore-runtime-9.0.0-rc.2-linux-x64.tar.gz", "hash": "aspnet-hash-rc2" }
+        ]
+      }
+    }
+  ]
+}

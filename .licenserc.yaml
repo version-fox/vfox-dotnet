@@ -1,0 +1,51 @@
+# Copyright 2026 Han Li and contributors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# License header check (Apache SkyWalking Eyes). Lua, Go, YAML, TOML, shell
+# and Dockerfiles are all covered. CI runs the check through
+# .github/workflows/license.yml; the local Docker command is in docs/e2e.md.
+header:
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: Han Li and contributors
+    content: |
+      Copyright 2026 Han Li and contributors
+
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+  paths-ignore:
+    # Git metadata (a gitfile in a worktree, a directory in a normal clone).
+    - '.git'
+    - '.git/**'
+    # Files without a header by design; .luarc.json cannot take one at all
+    # (every non-empty line must be JSON).
+    - '**/*.md'
+    - '**/*.json'
+    # go.sum is generated; every non-empty line is a hash record.
+    - '**/go.sum'
+    - 'LICENSE'
+    - '.tool-versions'
+    - '.license.tpl'
+
+  comment: on-failure

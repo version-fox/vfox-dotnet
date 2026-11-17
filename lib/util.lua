@@ -1,3 +1,17 @@
+-- Copyright 2026 Han Li and contributors
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--   http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 local http = require("http")
 local json = require("json")
 local strings = require("vfox.strings")
@@ -6,11 +20,48 @@ local util = {}
 
 util.BARE_URL = "https://dotnet.microsoft.com"
 
--- 路由基础
 -- @example https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json
 -- @example https://builds.dotnet.microsoft.com/dotnet/release-metadata/9.0/releases.json
 util.RELEASE_META_BASE_URL = "https://builds.dotnet.microsoft.com/dotnet/release-metadata"
-util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL.."/releases-index.json"
+util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL .. "/releases-index.json"
+
+--[[
+    Installation variants. The suffix is appended to the .NET release version
+    to form the version string vfox manages, for example:
+
+        8.0.8             -> full SDK (default, keeps existing installations working)
+        8.0.8-runtime     -> .NET Runtime only
+        8.0.8-aspnetcore  -> ASP.NET Core Runtime (includes the .NET Runtime)
+
+    `field` is the key holding the component inside a release entry of the
+    official releases.json metadata.
+]]
+local VARIANTS = {
+    { key = "sdk", suffix = "", label = "SDK", field = "sdk" },
+    { key = "runtime", suffix = "-runtime", label = "Runtime", field = "runtime" },
+    { key = "aspnetcore", suffix = "-aspnetcore", label = "ASP.NET Core Runtime", field = "aspnetcore-runtime" },
+}
+local DEFAULT_VARIANT = VARIANTS[1]
+
+-- Metadata is immutable during a single vfox invocation; avoid refetching it
+-- while building the list of variants for a release.
+local metaCache = {}
+
+local function fetchJson(url)
+    if metaCache[url] ~= nil then
+        return metaCache[url]
+    end
+    local resp, err = http.get({ url = url })
+    if err ~= nil or resp == nil or resp.status_code ~= 200 then
+        return nil
+    end
+    local ok, body = pcall(json.decode, resp.body)
+    if not ok then
+        return nil
+    end
+    metaCache[url] = body
+    return body
+end
 
 -- Cache system info since it won't change during execution
 local cachedSysInfo = nil
@@ -37,19 +88,21 @@ function util:getOsTypeAndArch()
     end
 
     cachedSysInfo = {
-        osType = osType, archType = archType
+        osType = osType,
+        archType = archType,
+        rid = osType .. "-" .. archType,
     }
     return cachedSysInfo
 end
 
 --- parse semver
---- @param versionStr string dotNet version, maybe 3 or 3.1 or 3.1.1
+--- @param versionStr string|nil dotNet version, maybe 3 or 3.1 or 3.1.1 or 3.1.1-rc.1
 --- @return table an table with major, minor, patch
 function util:parseVersion(versionStr)
     -- 默认值
     local major, minor, patch = 0, 0, 0
 
-    if (versionStr) then
+    if versionStr then
         -- 解析版本号
         local parts = {}
         for part in string.gmatch(versionStr, "%d+") do
@@ -57,9 +110,15 @@ function util:parseVersion(versionStr)
         end
 
         -- 根据解析结果赋值
-        if parts[1] then major = parts[1] end
-        if parts[2] then minor = parts[2] end
-        if parts[3] then patch = parts[3] end
+        if parts[1] then
+            major = parts[1]
+        end
+        if parts[2] then
+            minor = parts[2]
+        end
+        if parts[3] then
+            patch = parts[3]
+        end
     end
 
     -- 构建 channelVersion 和 releaseVersion
@@ -73,55 +132,163 @@ function util:parseVersion(versionStr)
         patch = patch,
         majorVersion = majorVersion,
         channelVersion = channelVersion,
-        releaseVersion = releaseVersion
+        releaseVersion = releaseVersion,
     }
 end
 
---- get channel version
---- @param userVersion string something like "9" or "9.0" or "9.0.12", or nil
---- @return table channel-info by dotnet
-function util:getAvailableByUserVersion(userVersion)
-    --- get all release info
-    local resp, err = http.get({
-        url = util.RELEASE_META_INDEX_URL
-    })
+--- Split a version string into its .NET version and distribution variant.
+--- Unknown suffixes are left alone and resolve to the default SDK variant.
+--- @param versionStr string|nil something like "8", "8.0.8" or "8.0.8-runtime"
+--- @return string baseVersion, table variant
+function util:splitVariant(versionStr)
+    versionStr = versionStr or ""
+    for _, variant in ipairs(VARIANTS) do
+        if variant.suffix ~= "" and strings.has_suffix(versionStr, variant.suffix) then
+            return string.sub(versionStr, 1, -(#variant.suffix + 1)), variant
+        end
+    end
+    return versionStr, DEFAULT_VARIANT
+end
 
-    if err ~= nil or resp.status_code ~= 200 then
+--- A version is a prefix of another only on a component boundary, so "8.0.3"
+--- must not accidentally resolve to "8.0.34".
+--- @param candidate string a complete version from the metadata
+--- @param requested string the (possibly partial) version supplied by the user
+--- @return boolean
+function util:isVersionPrefix(candidate, requested)
+    if candidate == requested then
+        return true
+    end
+    if not strings.has_prefix(candidate, requested) then
+        return false
+    end
+    local nextChar = string.sub(candidate, #requested + 1, #requested + 1)
+    return nextChar == "." or nextChar == "-"
+end
+
+--- Pick the binary archive for the current platform out of a component's files.
+--- Installers (.pkg/.exe) and the composite ASP.NET archives are skipped.
+--- @param files table|nil list of file descriptors from releases.json
+--- @param rid string target runtime identifier, e.g. "linux-x64"
+--- @return table|nil
+local function findAsset(files, rid)
+    if not files then
+        return nil
+    end
+    for _, file in ipairs(files) do
+        if
+            file.rid == rid
+            and (strings.has_suffix(file.url, ".tar.gz") or strings.has_suffix(file.url, ".zip"))
+            and not string.find(file.url, "-composite-", 1, true)
+        then
+            return file
+        end
+    end
+    return nil
+end
+
+local function buildVersionInfo(release, variant, sysInfo, isLts)
+    local component = release[variant.field]
+    if not component then
+        return nil
+    end
+    local asset = findAsset(component.files, sysInfo.rid)
+    if not asset then
+        return nil
+    end
+
+    local releaseVersion = release["release-version"]
+    local noteTable = {}
+    if variant.key ~= DEFAULT_VARIANT.key then
+        table.insert(noteTable, variant.label)
+    end
+    if isLts then
+        table.insert(noteTable, "LTS")
+    end
+    if release["security"] then
+        table.insert(noteTable, "Security Patch")
+    end
+
+    return {
+        version = releaseVersion .. variant.suffix,
+        url = asset.url,
+        note = table.concat(noteTable, " - "),
+        sha512 = asset.hash,
+        addition = {
+            { name = variant.label, version = component["version"] or releaseVersion },
+        },
+    }
+end
+
+--- Build the installable variants of every release in one channel.
+--- @param url string releases.json URL
+--- @param variant table|nil when set, only build this variant
+--- @return table list of version descriptors
+function util:getAvailableByChannelReleaseUrl(url, variant)
+    local sysInfo = util:getOsTypeAndArch()
+    local body = fetchJson(url)
+    if not body then
         return {}
     end
 
-    local body = json.decode(resp.body)
-    local releases_index = body["releases-index"]
+    local isLts = body["release-type"] == "lts"
     local result = {}
-    local has_prefix = strings.has_prefix
+    for _, release in ipairs(body["releases"] or {}) do
+        if variant then
+            local info = buildVersionInfo(release, variant, sysInfo, isLts)
+            if info then
+                result[#result + 1] = info
+            end
+        else
+            for _, candidate in ipairs(VARIANTS) do
+                local info = buildVersionInfo(release, candidate, sysInfo, isLts)
+                if info then
+                    result[#result + 1] = info
+                end
+            end
+        end
+    end
+    return result
+end
 
-    --- if user provide version, filter by it
+--- get channel version
+--- @param userVersion string|nil something like "9" or "9.0.12-runtime", or nil
+--- @return table channel-info by dotnet
+function util:getAvailableByUserVersion(userVersion)
+    local body = fetchJson(util.RELEASE_META_INDEX_URL)
+    if not body then
+        return {}
+    end
+    local releasesIndex = body["releases-index"] or {}
+    local result = {}
+
     if userVersion then
-        local userVersionInfo = util:parseVersion(userVersion)
+        local baseVersion, variant = util:splitVariant(userVersion)
+        local userVersionInfo = util:parseVersion(baseVersion)
 
         local targetChannel = userVersionInfo.channelVersion
-        --- if user provide "9", make sure targetChannel is "9" but not "9.0"
+        --- If the user provide "9", make sure targetChannel is "9" but not "9.0"
         --- so we can get "9.1" if there is one
-        if (userVersionInfo.majorVersion == userVersion) then
+        if userVersionInfo.majorVersion == baseVersion then
             targetChannel = userVersionInfo.majorVersion
         end
 
-        for _, channel in ipairs(releases_index) do
-            if has_prefix(channel["channel-version"], targetChannel) then
-                local releaseInChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
+        for _, channel in ipairs(releasesIndex) do
+            if util:isVersionPrefix(channel["channel-version"], targetChannel) then
+                local inChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"], variant)
                 -- Preallocate space in result table
-                for i=1, #releaseInChannel do
-                    result[#result + 1] = releaseInChannel[i]
+                for i = 1, #inChannel do
+                    result[#result + 1] = inChannel[i]
                 end
                 break
             end
         end
     else
-        for _, channel in ipairs(releases_index) do
-            local releaseInChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
+        for _, channel in ipairs(releasesIndex) do
+            local inChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
             -- Preallocate space in result table
-            for i=1, #releaseInChannel do
-                result[#result + 1] = releaseInChannel[i]
+            for i = 1, #inChannel do
+                result[#result + 1] = inChannel[i]
             end
         end
     end
@@ -129,80 +296,32 @@ function util:getAvailableByUserVersion(userVersion)
     return result
 end
 
---- get release version info
---- @param url string something like "ms.dev/3.0/release-info.json"
---- @return table Descriptions of available versions and accompanying tool descriptions
-function util:getAvailableByChannelReleaseUrl(url)
-    local sysInfo = util:getOsTypeAndArch()
-    local osType = sysInfo.osType
-    local archType = sysInfo.archType
-    local rid = osType .. "-" .. archType
-    local has_suffix = strings.has_suffix
-
-    local resp, err = http.get({
-        url = url
-    })
-    if err ~= nil or resp.status_code ~= 200 then
-        return {}
-    end
-    local body = json.decode(resp.body)
-
-    local isLts = body["release-type"] == "lts"
-    local releases = body["releases"]
-    local result = {}
-
-    result = {}
-
-    for _, release in ipairs(releases) do
-        local versionInfo = {
-            --- 版本号
-            --- 9.0.0-rc.1 / 9.0.2
-            version = release["release-version"],
-            --- 文件地址, 可以是远程地址或者本地文件路径 [可选]
-            url = "",
-            --- 备注信息 [可选]
-            note = "",
-            --- sha512 checksum [optional]
-            sha512 = "",
-        }
-
-        -- Build note
-        local noteTable = {}
-        if isLts then
-            table.insert(noteTable, "LTS")
-        end
-
-        -- if security is true then this release contains fixes for security issues
-        if release["security"] then
-            if #noteTable > 0 then
-                table.insert(noteTable, " - ")
-            end
-            table.insert(noteTable, "Security Patch")
-        end
-
-        versionInfo.note = table.concat(noteTable)
-
-        --- sdk mean contain latest sdk version
-        local latestSdk = release["sdk"]
-        local files = latestSdk["files"]
-        for _, file in ipairs(files) do
-            -- only need Binaries, not installer
-            if file.rid == rid and (has_suffix(file.url, ".tar.gz") or has_suffix(file.url, ".zip")) then
-                versionInfo.url = file.url
-                versionInfo.sha512 = file.hash
-                versionInfo.addition = {
-                    { name = "SDK", version = latestSdk["version"] }
-                }
-                break
-            end
-        end
-
-        if versionInfo.url ~= "" then
-            result[#result + 1] = versionInfo
-        end
+--- Resolve a user-provided version (partial, full, or variant-suffixed) into
+--- the single best matching installable release.
+--- @param userVersion string|nil the version requested by the user
+--- @return table|nil version descriptor, or nil when nothing matches
+function util:resolveVersion(userVersion)
+    if not userVersion or userVersion == "" or userVersion == "latest" then
+        local all = util:getAvailableByUserVersion(nil)
+        return all[1]
     end
 
-    return result
+    local baseVersion = util:splitVariant(userVersion)
+    local releases = util:getAvailableByUserVersion(userVersion)
+
+    -- Exact matches win over partial matches.
+    for _, info in ipairs(releases) do
+        if info.version == userVersion then
+            return info
+        end
+    end
+    for _, info in ipairs(releases) do
+        local infoBase = util:splitVariant(info.version)
+        if util:isVersionPrefix(infoBase, baseVersion) then
+            return info
+        end
+    end
+    return nil
 end
 
 return util
