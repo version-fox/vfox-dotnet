@@ -19,7 +19,7 @@ PLUGIN = {}
 --- Plugin name
 PLUGIN.name = "dotnet"
 --- Plugin version
-PLUGIN.version = "0.3.1"
+PLUGIN.version = "0.3.2"
 --- Plugin homepage
 PLUGIN.homepage = "https://github.com/version-fox/vfox-dotnet"
 --- Plugin license, please choose a correct license according to your needs.
