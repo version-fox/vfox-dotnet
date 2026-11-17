@@ -6,6 +6,9 @@
 
 ## 未发布
 
+- 通过版本后缀安装更小的发行版：`-runtime` 对应 .NET Runtime，`-aspnetcore` 对应
+  ASP.NET Core Runtime；不带后缀时仍然安装完整 SDK。部分版本号（`8`、`8.0`）和 `latest`
+  现在会解析为最新发布版本，并按版本组件边界匹配，因此 `8.0.3` 不会再选中 `8.0.34`。
 - 中英文双语文档：两种语言的 README，以及版本、开发、E2E 测试和本更新日志的指南。
 - 拉取请求和推送到 `main` 时自动运行检查：Lua 格式化（stylua）与诊断（lua-language-server）、
   工作流检查（actionlint）、许可证头检查（SkyWalking Eyes）、离线钩子测试（`vfox plugin test`），

@@ -13,23 +13,20 @@
 -- limitations under the License.
 
 local util = require("util")
-local strings = require("vfox.strings")
 
 --- @class PreInstallContext
---- @field version string User-input version
+--- @field version string User-input version, optionally with a variant suffix
+---                       (-runtime or -aspnetcore). Partial versions such as
+---                       "8" and "8.0" resolve to the newest release.
 
 --- Returns some pre-installed information, such as version number, download address, local files, etc.
 --- If checksum is provided, vfox will automatically check it for you.
 --- @param ctx PreInstallContext
 --- @return table Version information
 function PLUGIN:PreInstall(ctx)
-    local releases = util:getAvailableByUserVersion(ctx.version)
-
-    for _, release in ipairs(releases) do
-        if strings.has_prefix(release.version, ctx.version) then
-            return release
-        end
+    local release = util:resolveVersion(ctx.version)
+    if not release then
+        return {}
     end
-
-    return {}
+    return release
 end

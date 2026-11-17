@@ -1,0 +1,19 @@
+{
+  "releases-index": [
+    {
+      "channel-version": "9.0",
+      "release-type": "sts",
+      "releases.json": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/9.0/releases.json"
+    },
+    {
+      "channel-version": "8.0",
+      "release-type": "lts",
+      "releases.json": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/8.0/releases.json"
+    },
+    {
+      "channel-version": "80.0",
+      "release-type": "lts",
+      "releases.json": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/80.0/releases.json"
+    }
+  ]
+}

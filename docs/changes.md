@@ -7,6 +7,11 @@ the pull requests.
 
 ## Unreleased
 
+- Install a smaller distribution with a version suffix: `-runtime` for the .NET
+  Runtime and `-aspnetcore` for ASP.NET Core Runtime. Without a suffix the full
+  SDK is still installed. Partial versions (`8`, `8.0`) and `latest` now resolve
+  to the newest release, and matching is done on version-component boundaries so
+  `8.0.3` no longer selects `8.0.34`.
 - Bilingual documentation in English and Simplified Chinese: a README for each
   language and guides for versions, development, E2E tests and this changelog.
 - Automated checks on pull requests and pushes to `main`: Lua formatting

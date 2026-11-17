@@ -26,14 +26,42 @@ vfox install dotnet@8.0.34
 A bare major is deliberately kept at the major, not turned into `8.0`, so a
 channel such as `9.1` can still be found.
 
-`vfox search dotnet` lists the releases from every channel, with the SDK version
-of each in brackets. The plugin returns the whole list; vfox applies the search
-query:
+`vfox search dotnet` lists every installable variant of every release, with the
+distribution and SDK version in brackets. The plugin returns the whole list;
+vfox applies the search query:
 
 ```
 vfox search dotnet
+vfox search dotnet runtime
 vfox search dotnet 8.0
 ```
+
+## Distribution variants
+
+A version can carry a suffix that selects a smaller installation instead of the
+full SDK:
+
+| You write | What gets installed |
+| --- | --- |
+| `8.0.34` | .NET SDK (default) |
+| `8.0.34-runtime` | .NET Runtime only |
+| `8.0.34-aspnetcore` | ASP.NET Core Runtime, which includes the .NET Runtime |
+
+```bash
+vfox install dotnet@8.0.34-runtime
+vfox install dotnet@8-runtime
+vfox install dotnet@8.0.34-aspnetcore
+```
+
+The SDK archive is roughly 600 MB while the runtime-only archives are around
+70–100 MB. Use the runtime variants when you only need to run applications. No
+suffix keeps the historical behavior, so existing installations are unchanged.
+
+The suffix works everywhere a version is accepted, including `vfox use` and
+`.tool-versions`, and can be combined with a partial version (`8-runtime`,
+`8.0-runtime`). Since preview versions such as `11.0.0-rc.3` already contain
+hyphens, only the two known suffixes are interpreted as a distribution; an
+unknown suffix does not match any release.
 
 ## Install and use
 
@@ -72,7 +100,7 @@ The plugin exports two variables through vfox:
 
 | Variable | Value |
 | --- | --- |
-| `DOTNET_ROOT` | directory of the selected SDK |
+| `DOTNET_ROOT` | directory of the selected SDK or runtime |
 | `PATH` | the same directory is added at the front |
 
 These come from the `EnvKeys` hook and are applied when vfox is hooked into the

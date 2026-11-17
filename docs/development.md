@@ -22,15 +22,23 @@
 
 `Available` reads the
 [releases index](https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json),
-then every channel's `releases.json`. For each release it picks the *Binaries*
-file whose RID matches the current platform and whose URL ends in `.tar.gz` or
-`.zip`, and records the published SHA-512 as `sha512`. vfox searches that list.
+then every channel's `releases.json`. For each release and each distribution
+variant it picks the *Binaries* file whose RID matches the current platform and
+whose URL ends in `.tar.gz` or `.zip`, and records the published SHA-512 as
+`sha512`. Installers and composite ASP.NET archives are ignored. The variants
+are the SDK (no suffix), `-runtime` and `-aspnetcore`, built from the `sdk`,
+`runtime` and `aspnetcore-runtime` components of the release metadata. vfox
+searches that list.
 
-`PreInstall` parses the requested version into a channel (`8` → `8`, `8.0` →
-`8.0`, `8.0.34` → `8.0`), fetches only that channel, and returns the first
-release starting with the user's version. The `addition` field carries the SDK
-version, so vfox also downloads and unpacks the SDK that belongs to the release.
-vfox verifies the checksum before unpacking.
+`PreInstall` strips a known variant suffix, parses the remaining version into a
+channel (`8` → `8`, `8.0` → `8.0`, `8.0.34` → `8.0`), fetches only that channel and
+that variant, and resolves an exact version first, then a partial version on
+component boundaries (`8.0.3` does not match `8.0.34`). The `addition` field
+carries the component version and label. vfox verifies the checksum before
+unpacking.
+
+`resolveVersion` also maps `latest` and an empty version to the newest release
+returned by `Available`.
 
 The RID mapping lives in `lib/util.lua:getOsTypeAndArch`. When adding a platform,
 change it there and in the platform table in [versions.md](versions.md#platforms).

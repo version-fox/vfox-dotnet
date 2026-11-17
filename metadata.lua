@@ -25,7 +25,7 @@ PLUGIN.homepage = "https://github.com/version-fox/vfox-dotnet"
 --- Plugin license, please choose a correct license according to your needs.
 PLUGIN.license = "Apache 2.0"
 --- Plugin description
-PLUGIN.description = "dotnet plugin, support for dotnet sdks 6.0, 7.0, 8.0"
+PLUGIN.description = "dotnet plugin, supports SDK, .NET Runtime and ASP.NET Core Runtime distributions"
 
 --- !!! OPTIONAL !!!
 --[[
@@ -51,5 +51,5 @@ PLUGIN.manifestUrl = "https://github.com/version-fox/vfox-dotnet/releases/downlo
 PLUGIN.notes = {
     -- https://github.com/dotnet/install-scripts
     -- https://github.com/dotnet/core/issues/9671
-    "",
+    "Suffix a version with -runtime or -aspnetcore to install a smaller runtime-only distribution instead of the SDK.",
 }
