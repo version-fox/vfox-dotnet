@@ -4,7 +4,7 @@
 
 记录每个版本中用户可感知的变化。拉取请求列表见 GitHub 的发布页面。
 
-## 未发布
+## 0.3.1 (2026-11-17)
 
 - 通过版本后缀安装更小的发行版：`-runtime` 对应 .NET Runtime，`-aspnetcore` 对应
   ASP.NET Core Runtime；不带后缀时仍然安装完整 SDK。部分版本号（`8`、`8.0`）和 `latest`
@@ -18,12 +18,14 @@
 - `vfox link --detect dotnet` 可以直接纳入机器上已有的 .NET SDK，无需再下载一份：包括系统目录、
   `~/.dotnet`、Homebrew、Scoop、asdf、mise、CI 运行器工具缓存以及 `DOTNET_ROOT`/`DOTNET_HOME`。
   找到的 SDK 以它携带的最新运行时命名。参见 [detect.md](detect.md)。
+- 发布切换到共享的 `@v1` 可复用工作流：维护者通过 **Actions → Plugin → Run workflow** 发起发布，
+  拉取请求只运行检查。
 
 ## 0.3.0 (2025-09-29)
 
 - 版本信息改为从微软官方发布元数据读取，不再依赖其他来源；重写了版本检测与输出格式。
-- 发布切换到共享的 `plugin-manifest-action` 工作流：通过 **Actions → Plugin → Run workflow** 发起发布，
-  拉取请求只运行检查。
+- 发布改用共享的 `plugin-manifest-action`，取代原先自写的 Lua manifest 任务；当时仍由版本标签和
+  以 `Release v` 开头的拉取请求标题触发。
 
 ## 0.2.0 (2025-03-06)
 

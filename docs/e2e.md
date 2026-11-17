@@ -72,11 +72,11 @@ Docker is required. From the `tests/e2e` directory:
 go test -short ./...
 
 # Ubuntu container (builds the image and runs TestE2E).
-go test -v -timeout 45m -run TestE2E ./linux
+go test -v -timeout 55m -run TestE2E ./linux
 
 # Windows container: run from a Windows host with Docker in Windows
 # container mode.
-go test -v -timeout 45m -run TestE2E ./windows
+go test -v -timeout 55m -run TestE2E ./windows
 ```
 
 ## Configuration
@@ -95,7 +95,8 @@ and minor with `DOTNET_VERSION`.
 - **Ubuntu container** runs `go test -run TestE2E ./linux` on `ubuntu-latest`.
 - **Windows container** runs `go test -run TestE2E ./windows` on `windows-latest`.
 
-Both use Go 1.27.1 and have a 60 minute timeout. The `concurrency` block
+Both use Go 1.27.1. The CI job has a 60 minute timeout and runs the suites with
+`go test -timeout 55m`; the Go tests themselves use a 40 minute context. The `concurrency` block
 cancels an older pull-request run when a new commit arrives, while each commit
 on `main` keeps its own run.
 

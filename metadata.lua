@@ -34,7 +34,7 @@ NOTE:
     If the plugin is not compatible with the current vfox version,
     vfox will not load the plugin and prompt the user to upgrade vfox.
  --]]
-PLUGIN.minRuntimeVersion = "0.3.0"
+PLUGIN.minRuntimeVersion = "1.1.0"
 --[[
 NOTE:
     If configured, vfox will check for updates to the plugin at this address,
@@ -49,7 +49,5 @@ NOTE:
 PLUGIN.manifestUrl = "https://github.com/version-fox/vfox-dotnet/releases/download/manifest/manifest.json"
 -- Some things that need user to be attention!
 PLUGIN.notes = {
-    -- https://github.com/dotnet/install-scripts
-    -- https://github.com/dotnet/core/issues/9671
     "Suffix a version with -runtime or -aspnetcore to install a smaller runtime-only distribution instead of the SDK.",
 }

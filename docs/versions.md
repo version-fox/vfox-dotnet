@@ -78,7 +78,7 @@ lists every SDK installed by the selected release.
 
 `vfox use --global` selects the SDK for every new shell. `--project` selects it
 for the current directory and `--session` for the current shell only; see the
-[vfox documentation](https://vfox.dev/guides/usage.html) for the scope rules.
+[vfox documentation](https://vfox.dev/guides/quick-start.html) for the scope rules.
 
 ## Preview and early-access builds
 

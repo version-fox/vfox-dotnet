@@ -96,7 +96,7 @@ go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
 # Go E2E suites (no containers in -short mode)
 cd tests/e2e && go test -short ./... && cd ../..
 # Full container suites, see e2e.md
-cd tests/e2e && go test -v -timeout 45m -run TestE2E ./linux
+cd tests/e2e && go test -v -timeout 55m -run TestE2E ./linux
 ```
 
 The versions above are pinned in the workflows too. When upgrading a tool,

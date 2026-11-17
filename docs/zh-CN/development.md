@@ -11,7 +11,9 @@
 | `hooks/pre_install.lua` | `PreInstall`：把用户版本号解析为一个可下载的发布版本 |
 | `hooks/env_keys.lua` | `EnvKeys`：导出 `DOTNET_ROOT` 并把 SDK 目录加入 `PATH` |
 | `hooks/post_install.lua`、`hooks/pre_use.lua` | 扩展点，目前为空 |
+| `hooks/detect.lua` | `Detect`：查找机器上已有的 SDK，供 `vfox link --detect` 使用 |
 | `lib/util.lua` | 版本解析、发布查询、操作系统/架构到 RID 的映射 |
+| `lib/detect_dotnet.lua` | 通过 `sdk` 和运行时目录查找已安装的 SDK |
 | `Injection.lua` | vfox 注入对象的类型提示，不要修改 |
 | `tests/*_test.lua` | 由 `vfox plugin test` 运行的离线钩子测试 |
 | `tests/e2e/` | Ubuntu 和 Windows 端到端测试，参见 [e2e.md](e2e.md) |
@@ -81,7 +83,7 @@ go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
 # Go 端到端测试（-short 模式不启动容器）
 cd tests/e2e && go test -short ./... && cd ../..
 # 完整的容器测试，参见 e2e.md
-cd tests/e2e && go test -v -timeout 45m -run TestE2E ./linux
+cd tests/e2e && go test -v -timeout 55m -run TestE2E ./linux
 ```
 
 上述工具版本在工作流中也已固定。升级工具时，请同时更新工作流和本文档。

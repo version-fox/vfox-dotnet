@@ -68,7 +68,7 @@ dotnet --version
 `dotnet --list-sdks` 会列出选中版本附带的所有 SDK。
 
 `vfox use --global` 为之后所有新 shell 选中 SDK；`--project` 只作用于当前目录，`--session` 只作用于
-当前 shell。作用域规则参见 [vfox 文档](https://vfox.dev/zh/guides/usage.html)。
+当前 shell。作用域规则参见 [vfox 文档](https://vfox.dev/zh-hans/guides/quick-start.html)。
 
 ## 预览版和抢先体验版
 
