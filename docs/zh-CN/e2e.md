@@ -59,10 +59,10 @@ Server Core；Go 测试用 `Expand-Archive` 暂存 vfox，以避免使用运行�
 go test -short ./...
 
 # Ubuntu 容器（构建镜像并运行 TestE2E）。
-go test -v -timeout 45m -run TestE2E ./linux
+go test -v -timeout 55m -run TestE2E ./linux
 
 # Windows 容器：在 Windows 主机上以 Windows 容器模式运行 Docker。
-go test -v -timeout 45m -run TestE2E ./windows
+go test -v -timeout 55m -run TestE2E ./windows
 ```
 
 ## 配置
@@ -80,7 +80,8 @@ go test -v -timeout 45m -run TestE2E ./windows
 - **Ubuntu container** 在 `ubuntu-latest` 上运行 `go test -run TestE2E ./linux`。
 - **Windows container** 在 `windows-latest` 上运行 `go test -run TestE2E ./windows`。
 
-两者都使用 Go 1.27.1，超时时间为 60 分钟。`concurrency` 配置会在拉取请求有新提交时取消较旧的
+两者都使用 Go 1.27.1。CI 作业超时为 60 分钟，并用 `go test -timeout 55m` 运行测试，而 Go 测试
+自身使用 40 分钟的上下文。`concurrency` 配置会在拉取请求有新提交时取消较旧的
 推送运行，而 `main` 上的每个提交都保留自己的运行。
 
 升级 vfox 时，请同时修改 Linux Dockerfile、`tests/e2e/windows/e2e_test.go` 和

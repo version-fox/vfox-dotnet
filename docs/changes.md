@@ -7,6 +7,14 @@ the pull requests.
 
 ## Unreleased
 
+- Raised the minimum required vfox version to 1.1.0, matching the version the
+  SDK detection hook, CI and E2E tests already use. Installations on older
+  vfox releases are now prompted to upgrade.
+- Refreshed the documentation: corrected the release-workflow history and E2E
+  timeout details, fixed dead links, and completed the detected SDK path lists.
+
+## 0.3.1 (2026-11-17)
+
 - Install a smaller distribution with a version suffix: `-runtime` for the .NET
   Runtime and `-aspnetcore` for ASP.NET Core Runtime. Without a suffix the full
   SDK is still installed. Partial versions (`8`, `8.0`) and `latest` now resolve
@@ -26,14 +34,17 @@ the pull requests.
   instead of downloading another copy: system directories, `~/.dotnet`, Homebrew,
   Scoop, asdf, mise, the CI runner tool cache and `DOTNET_ROOT`/`DOTNET_HOME`.
   A found SDK is named after the newest runtime it carries. See [detect.md](detect.md).
+- Publication moved to the shared `@v1` reusable workflows: maintainers start a
+  release from **Actions → Plugin → Run workflow**, and pull requests only run
+  checks.
 
 ## 0.3.0 (2025-09-29)
 
 - Versions are read from Microsoft's official release metadata instead of a
   separate source, and version detection and output formatting were reworked.
-- Releases moved to the shared `plugin-manifest-action` workflows: publishing
-  is started from **Actions → Plugin → Run workflow**, pull requests only run
-  checks.
+- Release publishing switched to the shared `plugin-manifest-action` from the
+  bespoke Lua manifest job; it was still driven by version tags and `Release v`
+  pull-request titles.
 
 ## 0.2.0 (2025-03-06)
 

@@ -18,7 +18,7 @@ dotnet --version
 ```
 
 要让 `dotnet` 出现在 `PATH` 中，需要把 vfox 接入 shell，参见
-[vfox 快速开始](https://vfox.dev/zh/guides/quick-start.html)。
+[vfox 快速开始](https://vfox.dev/zh-hans/guides/quick-start.html)。
 
 ## 版本与名称
 
@@ -74,7 +74,7 @@ vfox 的操作系统和架构会映射为 .NET 运行时标识符（RID），例
 
 维护者可以在默认分支上通过 **Actions → Plugin → Run workflow** 发布，输入不带 `v` 前缀的稳定插件版本。
 共享工作流会更新 `metadata.lua`、创建版本提交与标签，并在本仓库发布 ZIP 和 manifest。
-无需本地打标签，也无需额外的发布令牌。拉取请求只运行检查；PR 标题不再触发发布。
+无需本地打标签，也无需额外的发布令牌。拉取请求只运行检查；发布通过手动 `workflow_dispatch` 完成。
 
 当 `PLUGIN.version` 已与标签一致时，仍然支持推送版本标签。如果发布失败，重新运行原来失败的作业即可继续。
 
