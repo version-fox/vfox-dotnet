@@ -1,3 +1,17 @@
+-- Copyright 2026 Han Li and contributors
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--   http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+
 local http = require("http")
 local json = require("json")
 local strings = require("vfox.strings")
@@ -10,7 +24,7 @@ util.BARE_URL = "https://dotnet.microsoft.com"
 -- @example https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json
 -- @example https://builds.dotnet.microsoft.com/dotnet/release-metadata/9.0/releases.json
 util.RELEASE_META_BASE_URL = "https://builds.dotnet.microsoft.com/dotnet/release-metadata"
-util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL.."/releases-index.json"
+util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL .. "/releases-index.json"
 
 -- Cache system info since it won't change during execution
 local cachedSysInfo = nil
@@ -37,7 +51,8 @@ function util:getOsTypeAndArch()
     end
 
     cachedSysInfo = {
-        osType = osType, archType = archType
+        osType = osType,
+        archType = archType,
     }
     return cachedSysInfo
 end
@@ -49,7 +64,7 @@ function util:parseVersion(versionStr)
     -- 默认值
     local major, minor, patch = 0, 0, 0
 
-    if (versionStr) then
+    if versionStr then
         -- 解析版本号
         local parts = {}
         for part in string.gmatch(versionStr, "%d+") do
@@ -57,9 +72,15 @@ function util:parseVersion(versionStr)
         end
 
         -- 根据解析结果赋值
-        if parts[1] then major = parts[1] end
-        if parts[2] then minor = parts[2] end
-        if parts[3] then patch = parts[3] end
+        if parts[1] then
+            major = parts[1]
+        end
+        if parts[2] then
+            minor = parts[2]
+        end
+        if parts[3] then
+            patch = parts[3]
+        end
     end
 
     -- 构建 channelVersion 和 releaseVersion
@@ -73,17 +94,17 @@ function util:parseVersion(versionStr)
         patch = patch,
         majorVersion = majorVersion,
         channelVersion = channelVersion,
-        releaseVersion = releaseVersion
+        releaseVersion = releaseVersion,
     }
 end
 
 --- get channel version
---- @param userVersion string something like "9" or "9.0" or "9.0.12", or nil
+--- @param userVersion string|nil something like "9" or "9.0" or "9.0.12", or nil
 --- @return table channel-info by dotnet
 function util:getAvailableByUserVersion(userVersion)
     --- get all release info
     local resp, err = http.get({
-        url = util.RELEASE_META_INDEX_URL
+        url = util.RELEASE_META_INDEX_URL,
     })
 
     if err ~= nil or resp.status_code ~= 200 then
@@ -102,7 +123,7 @@ function util:getAvailableByUserVersion(userVersion)
         local targetChannel = userVersionInfo.channelVersion
         --- if user provide "9", make sure targetChannel is "9" but not "9.0"
         --- so we can get "9.1" if there is one
-        if (userVersionInfo.majorVersion == userVersion) then
+        if userVersionInfo.majorVersion == userVersion then
             targetChannel = userVersionInfo.majorVersion
         end
 
@@ -110,7 +131,7 @@ function util:getAvailableByUserVersion(userVersion)
             if has_prefix(channel["channel-version"], targetChannel) then
                 local releaseInChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
                 -- Preallocate space in result table
-                for i=1, #releaseInChannel do
+                for i = 1, #releaseInChannel do
                     result[#result + 1] = releaseInChannel[i]
                 end
                 break
@@ -120,7 +141,7 @@ function util:getAvailableByUserVersion(userVersion)
         for _, channel in ipairs(releases_index) do
             local releaseInChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
             -- Preallocate space in result table
-            for i=1, #releaseInChannel do
+            for i = 1, #releaseInChannel do
                 result[#result + 1] = releaseInChannel[i]
             end
         end
@@ -140,7 +161,7 @@ function util:getAvailableByChannelReleaseUrl(url)
     local has_suffix = strings.has_suffix
 
     local resp, err = http.get({
-        url = url
+        url = url,
     })
     if err ~= nil or resp.status_code ~= 200 then
         return {}
@@ -191,7 +212,7 @@ function util:getAvailableByChannelReleaseUrl(url)
                 versionInfo.url = file.url
                 versionInfo.sha512 = file.hash
                 versionInfo.addition = {
-                    { name = "SDK", version = latestSdk["version"] }
+                    { name = "SDK", version = latestSdk["version"] },
                 }
                 break
             end
