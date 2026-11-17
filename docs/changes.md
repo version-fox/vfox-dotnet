@@ -5,7 +5,7 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
-## Unreleased
+## 0.3.2 (2026-11-17)
 
 - Raised the minimum required vfox version to 1.1.0, matching the version the
   SDK detection hook, CI and E2E tests already use. Installations on older
