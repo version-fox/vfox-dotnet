@@ -42,6 +42,8 @@ header:
     # (every non-empty line must be JSON).
     - '**/*.md'
     - '**/*.json'
+    # go.sum is generated; every non-empty line is a hash record.
+    - '**/go.sum'
     - 'LICENSE'
     - '.tool-versions'
     - '.license.tpl'

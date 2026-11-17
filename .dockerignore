@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# The E2E image builds the plugin from metadata.lua, hooks and lib, so those
-# stay in the context. Everything else is irrelevant to the image.
+# Both E2E Dockerfiles build from the repository root: the Linux image needs
+# metadata.lua, hooks and lib, the Windows image also needs its bootstrap
+# script under tests/e2e/windows. Everything else is irrelevant to the images.
 .git
 .idea
 .github
 .devcontainer
 docs
-tests/e2e/windows
 *.md
 LICENSE
 .tool-versions

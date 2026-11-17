@@ -85,9 +85,10 @@ GOBIN=/tmp/opencode/bin go install github.com/apache/skywalking-eyes/cmd/license
 go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
 "$(go env GOPATH)/bin/actionlint"
 
-# End-to-end tests
-docker build --file tests/e2e/linux/Dockerfile --tag vfox-dotnet-e2e:linux .
-docker run --rm vfox-dotnet-e2e:linux bash /e2e/e2e.sh
+# Go E2E suites (no containers in -short mode)
+cd tests/e2e && go test -short ./... && cd ../..
+# Full container suites, see e2e.md
+cd tests/e2e && go test -v -timeout 45m -run TestE2E ./linux
 ```
 
 The versions above are pinned in the workflows too. When upgrading a tool,

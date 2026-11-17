@@ -73,9 +73,10 @@ GOBIN=/tmp/opencode/bin go install github.com/apache/skywalking-eyes/cmd/license
 go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
 "$(go env GOPATH)/bin/actionlint"
 
-# 端到端测试
-docker build --file tests/e2e/linux/Dockerfile --tag vfox-dotnet-e2e:linux .
-docker run --rm vfox-dotnet-e2e:linux bash /e2e/e2e.sh
+# Go 端到端测试（-short 模式不启动容器）
+cd tests/e2e && go test -short ./... && cd ../..
+# 完整的容器测试，参见 e2e.md
+cd tests/e2e && go test -v -timeout 45m -run TestE2E ./linux
 ```
 
 上述工具版本在工作流中也已固定。升级工具时，请同时更新工作流和本文档。
