@@ -47,6 +47,7 @@ installed — `.tar.gz` on Linux and macOS, `.zip` on Windows. See
 **Using the plugin**
 
 - [Versions and names](docs/versions.md): version syntax, installing, using, searching, platforms and checksums
+- [Using SDKs already on the machine](docs/detect.md): `vfox link --detect dotnet`
 - [Changes](docs/changes.md): what changed in each release
 
 **Working on the plugin**

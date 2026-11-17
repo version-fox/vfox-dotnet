@@ -32,6 +32,11 @@ Both suites follow the same steps:
 6. Assert that `DOTNET_ROOT` is set and exists, that `vfox current dotnet`
    reports the release, that `dotnet --version` matches the requested major and
    minor, and that `dotnet --list-sdks` lists the SDK.
+7. Create a synthetic SDK home in a system location and run
+   `vfox link --detect -y dotnet`, then verify the linked version appears in
+   `vfox list dotnet` and can be used. This exercises the `Detect` hook with a
+   real vfox process; the SDK installed in step 4 lives under `.vfox` and is
+   deliberately excluded from detection.
 
 The steps run in one pass; any failure stops the suite and prints the output of
 the failed command.

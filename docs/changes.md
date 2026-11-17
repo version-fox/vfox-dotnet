@@ -17,6 +17,10 @@ the pull requests.
   `.gitattributes` to keep LF line endings everywhere.
 - `opencode.jsonc` with an explicit allowlist for pushing and creating or
   commenting on pull requests.
+- `vfox link --detect dotnet` adopts .NET SDKs that are already on the machine
+  instead of downloading another copy: system directories, `~/.dotnet`, Homebrew,
+  Scoop, asdf, mise, the CI runner tool cache and `DOTNET_ROOT`/`DOTNET_HOME`.
+  A found SDK is named after the newest runtime it carries. See [detect.md](detect.md).
 
 ## 0.3.0 (2025-09-29)
 

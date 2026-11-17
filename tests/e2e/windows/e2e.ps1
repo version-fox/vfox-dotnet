@@ -94,4 +94,17 @@ Step 'dotnet --list-sdks'
 & dotnet --list-sdks
 Assert ($LASTEXITCODE -eq 0) 'dotnet --list-sdks failed'
 
-Write-Host 'PASS: dotnet installed and used through the vfox plugin on Windows'
+# Detection: a synthetic SDK under ~/.dotnet must be found by
+# `vfox link --detect` and linked. The SDK installed above lives under
+# ~/.vfox and is deliberately excluded from detection.
+Step 'vfox link --detect -y dotnet'
+$fakeHome = Join-Path $env:USERPROFILE '.dotnet'
+New-Item -ItemType Directory -Force -Path (Join-Path $fakeHome 'sdk\6.0.428') | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $fakeHome 'shared\Microsoft.NETCore.App\6.0.36') | Out-Null
+New-Item -ItemType File -Force -Path (Join-Path $fakeHome 'dotnet.exe') | Out-Null
+& $vfoxExe link --detect -y dotnet
+Assert ($LASTEXITCODE -eq 0) 'vfox link --detect failed'
+$listed = (& $vfoxExe list dotnet | Out-String)
+Assert ($listed -match [regex]::Escape($fakeHome)) "linked SDK not listed: $listed"
+
+Write-Host 'PASS: dotnet installed, detected and used through the vfox plugin on Windows'

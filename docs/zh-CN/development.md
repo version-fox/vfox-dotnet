@@ -31,6 +31,18 @@ RID 映射位于 `lib/util.lua:getOsTypeAndArch`。增加平台时，请同时�
 
 结果会在一个 vfox 进程的生命周期内缓存，因为运行时操作系统和架构在此其间不会变化。
 
+## 检测已安装的 SDK
+
+`hooks/detect.lua` 为 `vfox link --detect dotnet` 实现 `Detect`。
+`lib/detect_dotnet.lua` 会扫描系统目录、`~/.dotnet`、Homebrew、Scoop、asdf、mise、CI 工具缓存以及
+`DOTNET_ROOT`/`DOTNET_HOME`。如果一个目录包含 `dotnet` 可执行文件且 `sdk/` 下至少有一个版本，就视为 SDK 主目录；
+它按 `shared/Microsoft.NETCore.App`（或 `host/fxr`）下的最新运行时命名，也就是 `vfox install` 使用的发布版本。
+`.vfox` 或 `$VFOX_HOME` 下的路径、重复版本以及只有运行时的目录都会被排除。结果按版本从新到旧排序。
+
+`tests/detect_test.lua`、`tests/detect_env_test.lua` 和 `tests/detect_windows_test.lua` 通过 `io.popen` 和
+`io.open` 模拟目录列表与文件内容，不需要真实的 SDK。E2E 测试最后还会链接一个模拟的系统 SDK，以验证 vfox
+确实能使用检测结果。
+
 ## 本地检查
 
 所有检查都会在 CI 中运行；本地只需要 Docker。在仓库根目录执行：

@@ -12,6 +12,9 @@
   以及 Ubuntu 容器和 Windows 运行器上的端到端测试。
 - 所有源码、构建和工作流文件都加上 Apache-2.0 许可证头，并通过 `.gitattributes` 统一使用 LF 换行。
 - 新增 `opencode.jsonc`，显式放行推送以及创建、评论拉取请求。
+- `vfox link --detect dotnet` 可以直接纳入机器上已有的 .NET SDK，无需再下载一份：包括系统目录、
+  `~/.dotnet`、Homebrew、Scoop、asdf、mise、CI 运行器工具缓存以及 `DOTNET_ROOT`/`DOTNET_HOME`。
+  找到的 SDK 以它携带的最新运行时命名。参见 [detect.md](detect.md)。
 
 ## 0.3.0 (2025-09-29)
 

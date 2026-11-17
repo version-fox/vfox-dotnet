@@ -11,7 +11,9 @@
 | `hooks/pre_install.lua` | `PreInstall`: resolves a user version to one downloadable release |
 | `hooks/env_keys.lua` | `EnvKeys`: exports `DOTNET_ROOT` and prepends the SDK to `PATH` |
 | `hooks/post_install.lua`, `hooks/pre_use.lua` | extension points, intentionally empty |
+| `hooks/detect.lua` | `Detect`: find SDKs already on the machine for `vfox link --detect` |
 | `lib/util.lua` | version parsing, release lookup, OS/architecture to RID mapping |
+| `lib/detect_dotnet.lua` | finding installed SDKs by their `sdk` and runtime directories |
 | `Injection.lua` | type hints for the objects vfox injects; never changed |
 | `tests/*_test.lua` | offline hook tests run by `vfox plugin test` |
 | `tests/e2e/` | Ubuntu and Windows end-to-end suites, see [e2e.md](e2e.md) |
@@ -35,6 +37,22 @@ change it there and in the platform table in [versions.md](versions.md#platforms
 
 The result is cached for the lifetime of one vfox process because the runtime
 OS and architecture cannot change while it runs.
+
+## Detecting installed SDKs
+
+`hooks/detect.lua` implements `Detect` for `vfox link --detect dotnet`.
+`lib/detect_dotnet.lua` scans the system directories, `~/.dotnet`, Homebrew,
+Scoop, asdf, mise, the CI tool cache and `DOTNET_ROOT`/`DOTNET_HOME`. A directory
+is an SDK home when it has the `dotnet` executable and at least one version under
+`sdk/`; it is named after the newest runtime under
+`shared/Microsoft.NETCore.App` (or `host/fxr`), which is the release version
+`vfox install` uses. Paths under `.vfox` or `$VFOX_HOME`, duplicate versions and
+runtime-only directories are left out. Results are sorted newest first.
+
+`tests/detect_test.lua`, `tests/detect_env_test.lua` and
+`tests/detect_windows_test.lua` fake the directory listings and file contents
+through `io.popen` and `io.open`; no real SDK is needed. The E2E suites link a
+synthetic system SDK as a final check that vfox can use the result.
 
 ## Local checks
 

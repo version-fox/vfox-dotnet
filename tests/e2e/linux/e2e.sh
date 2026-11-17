@@ -71,4 +71,17 @@ esac
 echo "== dotnet --list-sdks"
 dotnet --list-sdks | grep .
 
-echo "PASS: dotnet installed and used through the vfox plugin on Ubuntu"
+# Detection: a synthetic SDK in a system location must be found by
+# `vfox link --detect`, linked, and usable. The SDK vfox installed above lives
+# under ~/.vfox and is deliberately excluded from detection.
+echo "== vfox link --detect -y dotnet"
+mkdir -p /opt/dotnet/sdk/6.0.428 /opt/dotnet/shared/Microsoft.NETCore.App/6.0.36
+printf '#!/bin/sh\nif [ "$1" = "--version" ]; then echo 6.0.428; else echo fake; fi\n' > /opt/dotnet/dotnet
+chmod +x /opt/dotnet/dotnet
+vfox link --detect -y dotnet
+vfox list dotnet | grep "linked .* /opt/dotnet"
+vfox use --global dotnet@6.0.36
+eval "$(vfox env -s bash)"
+test "$(dotnet --version)" = "6.0.428"
+
+echo "PASS: dotnet installed, detected and used through the vfox plugin on Ubuntu"

@@ -44,6 +44,7 @@ vfox 的操作系统和架构会映射为 .NET 运行时标识符（RID），例
 **使用插件**
 
 - [版本与名称](docs/zh-CN/versions.md)：版本语法、安装、使用、搜索、平台与校验和
+- [使用机器上已有的 SDK](docs/zh-CN/detect.md)：`vfox link --detect dotnet`
 - [更新日志](docs/zh-CN/changes.md)：每个版本的变化
 
 **参与开发**
