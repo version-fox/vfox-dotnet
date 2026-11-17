@@ -66,14 +66,20 @@ function detect.list_children(dir)
     if not handle then
         return {}
     end
+    -- read("*a") rather than lines(): vfox's Windows io.popen override in
+    -- 1.1.0 does not provide the lines() method that gopher-lua has on Unix.
+    local output = handle:read("*a")
+    handle:close()
     local result = {}
-    for line in handle:lines() do
+    if type(output) ~= "string" then
+        return result
+    end
+    for line in output:gmatch("[^\r\n]+") do
         line = trim(line)
         if line ~= "" and line ~= "." and line ~= ".." then
             table.insert(result, detect.join(dir, line))
         end
     end
-    handle:close()
     return result
 end
 

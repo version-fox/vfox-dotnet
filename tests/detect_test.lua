@@ -52,13 +52,12 @@ end
 io.popen = function(cmd, mode)
     local dir = cmd:match("'([^']+)'") or cmd:match('"([^"]+)"')
     local children = (dir and dirs[norm(dir)]) or {}
-    local index = 0
     return {
-        lines = function()
-            return function()
-                index = index + 1
-                return children[index]
+        read = function(_, pattern)
+            if pattern == "*a" then
+                return table.concat(children, "\n")
             end
+            return nil
         end,
         close = function()
             return true
