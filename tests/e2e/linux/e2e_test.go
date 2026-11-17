@@ -145,12 +145,12 @@ func dotnetScript(command string) string {
 
 func verifyToolchain(t *testing.T, ctx context.Context, ctr tc.Container, version, installed string) {
 	t.Helper()
-	root := dotnetScript(`printf '%s' "$DOTNET_ROOT"`)
-	if root == "" {
+	root := execOK(ctx, t, ctr, dotnetScript(`printf '%s' "$DOTNET_ROOT"`))
+	if strings.TrimSpace(common.StripANSI(root)) == "" {
 		t.Fatal("DOTNET_ROOT is empty after vfox use")
 	}
 	execOK(ctx, t, ctr, dotnetScript(`test -d "$DOTNET_ROOT"`))
-	out := dotnetScript("vfox current dotnet")
+	out := execOK(ctx, t, ctr, dotnetScript("vfox current dotnet"))
 	if !strings.Contains(common.StripANSI(out), installed) {
 		t.Fatalf("vfox current dotnet does not report %s\n--- output ---\n%s", installed, out)
 	}
@@ -159,7 +159,7 @@ func verifyToolchain(t *testing.T, ctx context.Context, ctr tc.Container, versio
 	if !strings.HasPrefix(actual, common.MajorMinor(version)+".") {
 		t.Fatalf("dotnet --version = %q, want %s.*", actual, common.MajorMinor(version))
 	}
-	out = dotnetScript("dotnet --list-sdks")
+	out = execOK(ctx, t, ctr, dotnetScript("dotnet --list-sdks"))
 	if len(strings.TrimSpace(common.StripANSI(out))) == 0 {
 		t.Fatal("dotnet --list-sdks listed no SDK")
 	}

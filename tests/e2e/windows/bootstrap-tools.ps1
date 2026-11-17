@@ -20,18 +20,18 @@ $ErrorActionPreference = 'Stop'
 $arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
 $zip = Join-Path $env:TEMP 'pwsh.zip'
 $url = "https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-$arch.zip"
-$home = 'C:\Program Files\PowerShell\7'
+$pwshHome = 'C:\Program Files\PowerShell\7'
 
 curl.exe --retry 3 --retry-delay 5 --retry-all-errors --fail --silent --show-error --location --output $zip $url
 if ($LASTEXITCODE -ne 0) { throw 'FAIL: PowerShell download' }
-New-Item -ItemType Directory -Force -Path $home | Out-Null
-tar.exe -xf $zip -C $home
+New-Item -ItemType Directory -Force -Path $pwshHome | Out-Null
+tar.exe -xf $zip -C $pwshHome
 if ($LASTEXITCODE -ne 0) { throw 'FAIL: PowerShell extraction' }
 Remove-Item -Force $zip
-if (-not (Test-Path (Join-Path $home 'pwsh.exe'))) { throw 'FAIL: pwsh.exe missing' }
+if (-not (Test-Path (Join-Path $pwshHome 'pwsh.exe'))) { throw 'FAIL: pwsh.exe missing' }
 
 $machinePath = [Environment]::GetEnvironmentVariable('PATH', 'Machine')
-[Environment]::SetEnvironmentVariable('PATH', "$machinePath;$home", 'Machine')
+[Environment]::SetEnvironmentVariable('PATH', "$machinePath;$pwshHome", 'Machine')
 New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1 -PropertyType DWORD -Force | Out-Null
 
 Write-Host "PASS: installed PowerShell 7.6.6 ($arch)"

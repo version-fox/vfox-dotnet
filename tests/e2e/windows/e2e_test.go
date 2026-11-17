@@ -167,11 +167,11 @@ func useDotnet(t *testing.T, ctx context.Context, ctr tc.Container, installed st
 
 func verifyToolchain(t *testing.T, ctx context.Context, ctr tc.Container, version, installed string) {
 	t.Helper()
-	root := dotnetScript(`$env:DOTNET_ROOT`)
-	if strings.TrimSpace(root) == "" {
+	root := execOK(ctx, t, ctr, dotnetScript(`$env:DOTNET_ROOT`))
+	if strings.TrimSpace(common.StripANSI(root)) == "" {
 		t.Fatal("DOTNET_ROOT is empty after vfox use")
 	}
-	out := dotnetScript("vfox current dotnet")
+	out := execOK(ctx, t, ctr, dotnetScript("vfox current dotnet"))
 	if !strings.Contains(common.StripANSI(out), installed) {
 		t.Fatalf("vfox current dotnet does not report %s\n--- output ---\n%s", installed, out)
 	}
@@ -180,7 +180,7 @@ func verifyToolchain(t *testing.T, ctx context.Context, ctr tc.Container, versio
 	if !strings.HasPrefix(actual, common.MajorMinor(version)+".") {
 		t.Fatalf("dotnet --version = %q, want %s.*", actual, common.MajorMinor(version))
 	}
-	out = dotnetScript("dotnet --list-sdks")
+	out = execOK(ctx, t, ctr, dotnetScript("dotnet --list-sdks"))
 	if len(strings.TrimSpace(common.StripANSI(out))) == 0 {
 		t.Fatal("dotnet --list-sdks listed no SDK")
 	}
@@ -199,7 +199,7 @@ New-Item -ItemType File -Force -Path (Join-Path $fake 'dotnet.exe') | Out-Null
 `
 	execOK(ctx, t, ctr, script)
 	out := execOK(ctx, t, ctr, activated("vfox link --detect -y dotnet"))
-	if !strings.Contains(out, "dotnet@6.0.36") || !strings.Contains(out, "/.dotnet") {
+	if !strings.Contains(out, "dotnet@6.0.36") || !strings.Contains(out, ".dotnet") {
 		t.Fatalf("vfox link --detect did not report the synthetic SDK\n--- output ---\n%s", out)
 	}
 	out = execOK(ctx, t, ctr, "vfox list dotnet")
