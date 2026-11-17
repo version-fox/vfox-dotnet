@@ -93,12 +93,18 @@ func buildImage(t *testing.T, ctx context.Context, repoRoot string) string {
 
 func startContainer(t *testing.T, ctx context.Context, image string) tc.Container {
 	t.Helper()
-	ctr, err := tc.GenericContainer(ctx, tc.GenericContainerRequest{
-		ContainerRequest: tc.ContainerRequest{
-			Image: image,
-			Name:  common.ContainerName("windows"),
-		},
-		Started: true,
+	// A stock Windows daemon has no "bridge" network, only "nat". Creating
+	// a container unconditionally ensures the provider's default bridge, so
+	// point it at "nat" or the daemon reports "could not find plugin bridge".
+	provider, err := tc.NewDockerProvider(tc.WithDefaultBridgeNetwork("nat"))
+	if err != nil {
+		t.Fatalf("new docker provider: %v", err)
+	}
+	// The provider is not closed here: the container terminates through it
+	// in the caller's cleanup.
+	ctr, err := provider.RunContainer(ctx, tc.ContainerRequest{
+		Image: image,
+		Name:  common.ContainerName("windows"),
 	})
 	if err != nil {
 		t.Fatalf("start container: %v", err)
