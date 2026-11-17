@@ -5,6 +5,14 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
+## Unreleased
+
+- Raised the minimum required vfox version to 1.1.0, matching the version the
+  SDK detection hook, CI and E2E tests already use. Installations on older
+  vfox releases are now prompted to upgrade.
+- Refreshed the documentation: corrected the release-workflow history and E2E
+  timeout details, fixed dead links, and completed the detected SDK path lists.
+
 ## 0.3.1 (2026-11-17)
 
 - Install a smaller distribution with a version suffix: `-runtime` for the .NET
