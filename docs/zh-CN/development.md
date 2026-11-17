@@ -19,12 +19,17 @@
 ## 插件原理
 
 `Available` 读取[发布索引](https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json)，
-再读取每个通道的 `releases.json`。对每个发布版本，它会选择与当前平台 RID 匹配、且 URL 以 `.tar.gz`
-或 `.zip` 结尾的 *Binaries* 文件，并记录随发布提供的 SHA-512 作为 `sha512`。vfox 随后搜索这份列表。
+再读取每个通道的 `releases.json`。对每个发布版本和每个发行版变体，它会选择与当前平台 RID 匹配、且
+URL 以 `.tar.gz` 或 `.zip` 结尾的 *Binaries* 文件，并记录随发布提供的 SHA-512 作为 `sha512`。
+安装程序和 ASP.NET composite 压缩包会被忽略。变体包括 SDK（无后缀）、`-runtime` 和
+`-aspnetcore`，分别取自发布元数据中的 `sdk`、`runtime` 和 `aspnetcore-runtime` 组件。
+vfox 随后搜索这份列表。
 
-`PreInstall` 把请求的版本解析为通道（`8` → `8`、`8.0` → `8.0`、`8.0.34` → `8.0`），只抓取该通道，
-并返回第一个以用户输入开头的发布版本。`addition` 字段携带 SDK 版本，因此 vfox 也会下载并解压
-该发布版本附带的 SDK。vfox 会在解压前校验校验和。
+`PreInstall` 先去掉已知的变体后缀，再把剩余版本解析为通道（`8` → `8`、`8.0` → `8.0`、
+`8.0.34` → `8.0`），只抓取该通道和该变体，并优先匹配精确版本，然后按组件边界匹配部分版本
+（`8.0.3` 不会匹配 `8.0.34`）。`addition` 字段携带组件的版本和名称。vfox 会在解压前校验校验和。
+
+`resolveVersion` 还会把 `latest` 和空版本映射为 `Available` 返回的最新发布版本。
 
 RID 映射位于 `lib/util.lua:getOsTypeAndArch`。增加平台时，请同时修改这里和
 [versions.md](versions.md#平台) 中的平台表格。

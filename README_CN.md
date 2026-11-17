@@ -2,9 +2,9 @@
 
 [中文](README_CN.md) | [English](README.md)
 
-[vfox](https://vfox.dev/) 的 .NET SDK 插件。它从微软官方的
+[vfox](https://vfox.dev/) 的 .NET 插件。它从微软官方的
 [发布元数据](https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json)
-获取 SDK，并使用随发布提供的 SHA-512 校验和验证每一次下载。
+获取 SDK、.NET Runtime 或 ASP.NET Core Runtime，并使用随发布提供的 SHA-512 校验和验证每一次下载。
 
 ## 安装
 
@@ -33,6 +33,24 @@ vfox install dotnet@8.0.34   # 指定的运行时发布版本
 `vfox search dotnet 8.0` 会列出插件已知的版本。版本如何解析、预览版本以及插件设置的环境变量，
 参见[版本与名称](docs/zh-CN/versions.md)。
 
+## 发行版变体
+
+版本号可以带后缀，以安装比完整 SDK 更小的发行版：
+
+```
+vfox install dotnet@8.0.34-runtime      # 仅 .NET Runtime
+vfox install dotnet@8.0.34-aspnetcore   # ASP.NET Core Runtime（包含 .NET Runtime）
+```
+
+| 后缀 | 发行版 | 大致体积 |
+| --- | --- | --- |
+| *（无）* | .NET SDK（默认） | 约 600 MB |
+| `-runtime` | 仅 .NET Runtime | 约 70 MB |
+| `-aspnetcore` | ASP.NET Core Runtime | 约 100 MB |
+
+后缀适用于任何接受版本号的地方，包括 `vfox use` 和 `.tool-versions`。不带后缀的既有安装仍使用
+SDK。细节参见[版本与名称](docs/zh-CN/versions.md#发行版变体)。
+
 ## 平台
 
 vfox 的操作系统和架构会映射为 .NET 运行时标识符（RID），例如 `linux-x64`、`osx-arm64` 或
@@ -43,7 +61,7 @@ vfox 的操作系统和架构会映射为 .NET 运行时标识符（RID），例
 
 **使用插件**
 
-- [版本与名称](docs/zh-CN/versions.md)：版本语法、安装、使用、搜索、平台与校验和
+- [版本与名称](docs/zh-CN/versions.md)：版本语法、发行版变体、安装、使用、搜索、平台与校验和
 - [使用机器上已有的 SDK](docs/zh-CN/detect.md)：`vfox link --detect dotnet`
 - [更新日志](docs/zh-CN/changes.md)：每个版本的变化
 

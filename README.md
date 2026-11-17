@@ -2,8 +2,9 @@
 
 [中文](README_CN.md) | [English](README.md)
 
-A [vfox](https://vfox.dev/) plugin for the .NET SDK. It installs SDKs from
-Microsoft's official [release metadata](https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json)
+A [vfox](https://vfox.dev/) plugin for .NET. It installs SDKs, the .NET Runtime
+or ASP.NET Core Runtime from Microsoft's official
+[release metadata](https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json)
 and verifies every download with the SHA-512 checksum published next to it.
 
 ## Install
@@ -35,6 +36,26 @@ vfox install dotnet@8.0.34   # a specific runtime release
 [versions and names](docs/versions.md) for how a version is resolved, preview
 builds and the environment the plugin sets.
 
+## Distribution variants
+
+A version can carry a suffix to install a smaller distribution instead of the
+full SDK:
+
+```
+vfox install dotnet@8.0.34-runtime      # .NET Runtime only
+vfox install dotnet@8.0.34-aspnetcore   # ASP.NET Core Runtime (includes .NET Runtime)
+```
+
+| Suffix | Distribution | Approx. size |
+| --- | --- | --- |
+| *(none)* | .NET SDK (default) | ~600 MB |
+| `-runtime` | .NET Runtime only | ~70 MB |
+| `-aspnetcore` | ASP.NET Core Runtime | ~100 MB |
+
+The suffix works anywhere a version is accepted, including `vfox use` and
+`.tool-versions`. Existing installations without a suffix keep using the SDK.
+See [versions and names](docs/versions.md#distribution-variants) for details.
+
 ## Platforms
 
 vfox's OS and architecture are mapped to a .NET runtime identifier (RID) such
@@ -46,7 +67,7 @@ installed — `.tar.gz` on Linux and macOS, `.zip` on Windows. See
 
 **Using the plugin**
 
-- [Versions and names](docs/versions.md): version syntax, installing, using, searching, platforms and checksums
+- [Versions and names](docs/versions.md): version syntax, distribution variants, installing, using, searching, platforms and checksums
 - [Using SDKs already on the machine](docs/detect.md): `vfox link --detect dotnet`
 - [Changes](docs/changes.md): what changed in each release
 
