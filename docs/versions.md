@@ -91,9 +91,8 @@ vfox search dotnet 11.0
 vfox install dotnet@11.0.0-rc.3
 ```
 
-Use an exact version to install a preview. A channel such as `11.0` selects the
-first release Microsoft lists in it, which is the newest one; until the channel
-ships a stable release, that can be a preview.
+Use an exact version for a preview: a channel such as `11.0` selects the newest
+stable release, not a preview that happens to be listed first.
 
 ## Environment
 
