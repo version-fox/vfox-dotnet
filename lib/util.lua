@@ -191,7 +191,7 @@ end
 --- @param archive string file name prefix of the variant, e.g. "dotnet-runtime-"
 --- @return table|nil
 local function findAsset(files, rid, archive)
-    if not files then
+    if type(files) ~= "table" then
         return nil
     end
     for _, file in ipairs(files) do
@@ -209,7 +209,8 @@ end
 
 local function buildVersionInfo(release, variant, sysInfo, isLts)
     local component = release[variant.field]
-    if not component then
+    -- mise hands a JSON null over as a userdata, which is not nil, so test the type.
+    if type(component) ~= "table" then
         return nil
     end
     local asset = findAsset(component.files, sysInfo.rid, variant.archive)
