@@ -56,17 +56,28 @@ local DEFAULT_VARIANT = VARIANTS[1]
 -- while building the list of variants for a release.
 local metaCache = {}
 
+--- Fetch and decode one release metadata document. A failed request, a status
+--- other than 200 or a body that is not a JSON object raises an error that names
+--- the URL. A listing must never leave a channel out without saying so.
+--- @param url string
+--- @return table the decoded document
 local function fetchJson(url)
     if metaCache[url] ~= nil then
         return metaCache[url]
     end
     local resp, err = http.get({ url = url })
-    if err ~= nil or resp == nil or resp.status_code ~= 200 then
-        return nil
+    if err ~= nil or resp == nil then
+        error("cannot fetch " .. url .. ": " .. tostring(err or "no response"), 0)
+    end
+    if resp.status_code ~= 200 then
+        error("cannot fetch " .. url .. ": HTTP " .. tostring(resp.status_code), 0)
     end
     local ok, body = pcall(json.decode, resp.body)
     if not ok then
-        return nil
+        error("cannot decode " .. url .. ": " .. tostring(body), 0)
+    end
+    if type(body) ~= "table" then
+        error("cannot decode " .. url .. ": not a JSON object", 0)
     end
     metaCache[url] = body
     return body
@@ -248,9 +259,6 @@ end
 function util:getAvailableByChannelReleaseUrl(url, variant)
     local sysInfo = util:getOsTypeAndArch()
     local body = fetchJson(url)
-    if not body then
-        return {}
-    end
 
     local isLts = body["release-type"] == "lts"
     local result = {}
@@ -277,9 +285,6 @@ end
 --- @return table channel-info by dotnet
 function util:getAvailableByUserVersion(userVersion)
     local body = fetchJson(util.RELEASE_META_INDEX_URL)
-    if not body then
-        return {}
-    end
     local releasesIndex = body["releases-index"] or {}
     local result = {}
 

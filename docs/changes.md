@@ -16,6 +16,10 @@ the pull requests.
   such as the ASP.NET Core Runtime of the 1.0, 1.1 and 2.0 channels. mise reads
   that `null` as a value that cannot be indexed, which failed the whole list.
   Components that are `null` are now skipped.
+- A failed request for release metadata now stops the listing and names the URL
+  and the HTTP status, instead of quietly leaving that channel out. Before, `latest`
+  could resolve to an older .NET while the newest channel could not be fetched, and
+  `vfox search` could show an incomplete list without an error.
 
 ## 0.3.2 (2026-11-17)
 
