@@ -44,9 +44,9 @@ tests/e2e/
 6. 激活 vfox，运行 `vfox use --global dotnet@<版本>`，并用 `vfox env -s <shell>` 应用环境。
 7. 断言 `DOTNET_ROOT` 已设置且目录存在、`vfox current dotnet` 报告选中的发布版本、
    `dotnet --version` 与请求的主次版本号一致，且 `dotnet --list-sdks` 列出了该 SDK。
-8. 在系统位置创建一个模拟的 SDK 主目录，运行 `vfox link --detect -y dotnet`，然后验证链接的版本
-   出现在 `vfox list dotnet` 中（Linux 上还可正常使用）。这会在真实 vfox 进程中验证 `Detect` 钩子；
-   第 5 步安装的 SDK 位于 `.vfox` 下，会被刻意排除在检测之外。
+8. 在 `Detect` 钩子会扫描的位置创建一个模拟的 SDK 主目录（Linux 为 `/opt/dotnet`，Windows 为 `~/.dotnet`），
+   运行 `vfox link --detect -y dotnet`，然后验证链接的版本出现在 `vfox list dotnet` 中（Linux 上还可正常使用）。
+   这会在真实 vfox 进程中验证 `Detect` 钩子；第 5 步安装的 SDK 位于 `.vfox` 下，会被刻意排除在检测之外。
 
 所有涉及网络调用都经过 `common.Retry`（默认三次，10s/20s 退避），因为临时容器中的下载和进程调用
 偶尔会失败。任何断言失败都会停止测试，并打印相关命令的输出。

@@ -27,7 +27,7 @@ dotnet --version
 ```
 vfox install dotnet@8        # 8.x 系列中最新的发布版本
 vfox install dotnet@8.0      # 8.0 通道中最新的发布版本
-vfox install dotnet@8.0.34   # 指定的运行时发布版本
+vfox install dotnet@8.0.34   # 指定的 .NET 发布版本，安装 SDK
 ```
 
 `vfox search dotnet 8.0` 会列出插件已知的版本。版本如何解析、预览版本以及插件设置的环境变量，

@@ -4,7 +4,7 @@
 
 记录每个版本中用户可感知的变化。拉取请求列表见 GitHub 的发布页面。
 
-## 未发布
+## 0.3.3 (2026-11-18)
 
 - 修复 .NET 10 及更高版本的 `-runtime`：其 runtime 组件把 apphost 包排在运行时之前，因此
   `vfox install dotnet@<版本>-runtime` 会安装 apphost 包，且没有 `dotnet` 可执行文件。现在按文件名

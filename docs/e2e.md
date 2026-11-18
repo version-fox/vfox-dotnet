@@ -53,11 +53,12 @@ Both suites follow the same steps (step 4 runs in the Linux suite only):
 7. Assert that `DOTNET_ROOT` is set and exists, that `vfox current dotnet`
    reports the release, that `dotnet --version` matches the requested major and
    minor, and that `dotnet --list-sdks` lists the SDK.
-8. Create a synthetic SDK home in a system location and run
-   `vfox link --detect -y dotnet`, then verify the linked version appears in
-   `vfox list dotnet` (and can be used on Linux). This exercises the `Detect`
-   hook with a real vfox process; the SDK installed in step 5 lives under
-   `.vfox` and is deliberately excluded from detection.
+8. Create a synthetic SDK home where the `Detect` hook looks (`/opt/dotnet` on
+   Linux, `~/.dotnet` on Windows) and run `vfox link --detect -y dotnet`, then
+   verify the linked version appears in `vfox list dotnet` (and can be used on
+   Linux). This exercises the `Detect` hook with a real vfox process; the SDK
+   installed in step 5 lives under `.vfox` and is deliberately excluded from
+   detection.
 
 Every network-touching call goes through `common.Retry` (three attempts by
 default, 10s/20s backoff), because downloads and daemon calls in throwaway

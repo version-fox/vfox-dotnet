@@ -27,8 +27,8 @@ A bare major is deliberately kept at the major, not turned into `8.0`, so a
 channel such as `9.1` can still be found.
 
 `vfox search dotnet` lists every installable variant of every release, with the
-distribution and SDK version in brackets. The plugin returns the whole list;
-vfox applies the search query:
+distribution and the version of its component in brackets. The plugin returns the
+whole list; vfox applies the search query:
 
 ```
 vfox search dotnet
@@ -91,8 +91,9 @@ vfox search dotnet 11.0
 vfox install dotnet@11.0.0-rc.3
 ```
 
-Use an exact version for a preview: a channel such as `11.0` selects the newest
-stable release, not a preview that happens to be listed first.
+Use an exact version to install a preview. A channel such as `11.0` selects the
+first release Microsoft lists in it, which is the newest one; until the channel
+ships a stable release, that can be a preview.
 
 ## Environment
 
