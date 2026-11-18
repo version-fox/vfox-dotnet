@@ -322,14 +322,35 @@ function util:getAvailableByUserVersion(userVersion)
     return result
 end
 
+--- Whether a version, without its variant suffix, is a preview such as 9.0.0-rc.2.
+--- @param baseVersion string
+--- @return boolean
+local function isPreview(baseVersion)
+    return string.find(baseVersion, "-", 1, true) ~= nil
+end
+
+--- Pick the newest stable release from a list ordered newest first. When the list
+--- holds only previews, its first entry is returned, so a channel that has no
+--- stable release yet still resolves to its newest preview.
+--- @param releases table version descriptors, newest first
+--- @return table|nil
+local function newestStable(releases)
+    for _, info in ipairs(releases) do
+        local infoBase = util:splitVariant(info.version)
+        if not isPreview(infoBase) then
+            return info
+        end
+    end
+    return releases[1]
+end
+
 --- Resolve a user-provided version (partial, full, or variant-suffixed) into
 --- the single best matching installable release.
 --- @param userVersion string|nil the version requested by the user
 --- @return table|nil version descriptor, or nil when nothing matches
 function util:resolveVersion(userVersion)
     if not userVersion or userVersion == "" or userVersion == "latest" then
-        local all = util:getAvailableByUserVersion(nil)
-        return all[1]
+        return newestStable(util:getAvailableByUserVersion(nil))
     end
 
     local baseVersion = util:splitVariant(userVersion)
@@ -341,13 +362,17 @@ function util:resolveVersion(userVersion)
             return info
         end
     end
+
+    -- A partial version takes the newest stable release it matches, even when a
+    -- preview of the same channel is listed above it.
+    local matches = {}
     for _, info in ipairs(releases) do
         local infoBase = util:splitVariant(info.version)
         if util:isVersionPrefix(infoBase, baseVersion) then
-            return info
+            matches[#matches + 1] = info
         end
     end
-    return nil
+    return newestStable(matches)
 end
 
 return util

@@ -5,6 +5,10 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
+## Unreleased
+
+- A partial version such as `dotnet@11.0` or `dotnet@11`, and `latest`, now pick the newest stable release. A preview listed above the stable release used to be installed instead, and `latest` picked the preview of a newer channel that had no stable release yet. A channel with no stable release still installs its newest preview, and exact versions are unchanged.
+
 ## 0.3.3 (2026-11-18)
 
 - Fixed `-runtime` for .NET 10 and later. Their runtime component lists the

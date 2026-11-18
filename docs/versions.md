@@ -14,7 +14,7 @@ A version is one to three numeric parts. Each part narrows the lookup:
 | You write | What the plugin looks for |
 | --- | --- |
 | `8` | the first channel whose version starts with `8` (usually `8.0`) |
-| `8.0` | channel `8.0`; the newest release in it |
+| `8.0` | channel `8.0`; its newest stable release, or its newest preview when it has none |
 | `8.0.34` | release `8.0.34`; the SDK that ships with it |
 
 ```bash
@@ -92,7 +92,8 @@ vfox install dotnet@11.0.0-rc.3
 ```
 
 Use an exact version for a preview: a channel such as `11.0` selects the newest
-stable release, not a preview that happens to be listed first.
+stable release, not a preview that happens to be listed first. A channel with no
+stable release yet selects its newest preview.
 
 ## Environment
 
