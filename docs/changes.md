@@ -5,6 +5,13 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
+## Unreleased
+
+- Fixed `-runtime` for .NET 10 and later. Their runtime component lists the
+  apphost pack before the runtime, so `vfox install dotnet@<version>-runtime`
+  installed the apphost pack and left no `dotnet` executable. The archive is now
+  chosen by its name, so every release that has a runtime installs it.
+
 ## 0.3.2 (2026-11-17)
 
 - Raised the minimum required vfox version to 1.1.0, matching the version the
