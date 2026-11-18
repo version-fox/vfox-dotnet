@@ -7,6 +7,7 @@ the pull requests.
 
 ## Unreleased
 
+- A partial version such as `dotnet@11.0` or `dotnet@11`, and `latest`, now pick the newest stable release. A preview listed above the stable release used to be installed instead, and `latest` picked the preview of a newer channel that had no stable release yet. A channel with no stable release still installs its newest preview, and exact versions are unchanged.
 - Fixed `-runtime` for .NET 10 and later. Their runtime component lists the
   apphost pack before the runtime, so `vfox install dotnet@<version>-runtime`
   installed the apphost pack and left no `dotnet` executable. The archive is now
