@@ -34,12 +34,21 @@ util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL .. "/releases-index.jso
         8.0.8-aspnetcore  -> ASP.NET Core Runtime (includes the .NET Runtime)
 
     `field` is the key holding the component inside a release entry of the
-    official releases.json metadata.
+    official releases.json metadata. `archive` is the start of the file name of
+    the variant's archive inside that component. A component can list other
+    packages too (the runtime component of .NET 10 and later lists the apphost
+    pack first), so the name decides which archive is taken, not the position.
 ]]
 local VARIANTS = {
-    { key = "sdk", suffix = "", label = "SDK", field = "sdk" },
-    { key = "runtime", suffix = "-runtime", label = "Runtime", field = "runtime" },
-    { key = "aspnetcore", suffix = "-aspnetcore", label = "ASP.NET Core Runtime", field = "aspnetcore-runtime" },
+    { key = "sdk", suffix = "", label = "SDK", field = "sdk", archive = "dotnet-sdk-" },
+    { key = "runtime", suffix = "-runtime", label = "Runtime", field = "runtime", archive = "dotnet-runtime-" },
+    {
+        key = "aspnetcore",
+        suffix = "-aspnetcore",
+        label = "ASP.NET Core Runtime",
+        field = "aspnetcore-runtime",
+        archive = "aspnetcore-runtime-",
+    },
 }
 local DEFAULT_VARIANT = VARIANTS[1]
 
@@ -166,18 +175,29 @@ function util:isVersionPrefix(candidate, requested)
     return nextChar == "." or nextChar == "-"
 end
 
---- Pick the binary archive for the current platform out of a component's files.
+--- The file name at the end of a download URL.
+--- @param url string
+--- @return string
+local function fileName(url)
+    return string.match(url, "([^/]+)$") or url
+end
+
+--- Pick the binary archive of a variant for the current platform out of a
+--- component's files. The archive's name must start with the variant's prefix,
+--- so a package listed before it (such as the apphost pack) is never taken.
 --- Installers (.pkg/.exe) and the composite ASP.NET archives are skipped.
 --- @param files table|nil list of file descriptors from releases.json
 --- @param rid string target runtime identifier, e.g. "linux-x64"
+--- @param archive string file name prefix of the variant, e.g. "dotnet-runtime-"
 --- @return table|nil
-local function findAsset(files, rid)
+local function findAsset(files, rid, archive)
     if not files then
         return nil
     end
     for _, file in ipairs(files) do
         if
             file.rid == rid
+            and strings.has_prefix(fileName(file.url), archive)
             and (strings.has_suffix(file.url, ".tar.gz") or strings.has_suffix(file.url, ".zip"))
             and not string.find(file.url, "-composite-", 1, true)
         then
@@ -192,7 +212,7 @@ local function buildVersionInfo(release, variant, sysInfo, isLts)
     if not component then
         return nil
     end
-    local asset = findAsset(component.files, sysInfo.rid)
+    local asset = findAsset(component.files, sysInfo.rid, variant.archive)
     if not asset then
         return nil
     end

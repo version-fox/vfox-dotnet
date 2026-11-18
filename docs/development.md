@@ -23,12 +23,15 @@
 `Available` reads the
 [releases index](https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json),
 then every channel's `releases.json`. For each release and each distribution
-variant it picks the *Binaries* file whose RID matches the current platform and
-whose URL ends in `.tar.gz` or `.zip`, and records the published SHA-512 as
-`sha512`. Installers and composite ASP.NET archives are ignored. The variants
-are the SDK (no suffix), `-runtime` and `-aspnetcore`, built from the `sdk`,
-`runtime` and `aspnetcore-runtime` components of the release metadata. vfox
-searches that list.
+variant it picks the *Binaries* file whose RID matches the current platform,
+whose name starts with the variant's package name (`dotnet-sdk-`,
+`dotnet-runtime-` or `aspnetcore-runtime-`) and whose URL ends in `.tar.gz` or
+`.zip`, and records the published SHA-512 as `sha512`. The name is what selects
+the file: the `runtime` component of .NET 10 and later also lists the apphost
+pack, before the runtime. Installers and composite ASP.NET archives are ignored.
+The variants are the SDK (no suffix), `-runtime` and `-aspnetcore`, built from
+the `sdk`, `runtime` and `aspnetcore-runtime` components of the release metadata.
+vfox searches that list.
 
 `PreInstall` strips a known variant suffix, parses the remaining version into a
 channel (`8` → `8`, `8.0` → `8.0`, `8.0.34` → `8.0`), fetches only that channel and
