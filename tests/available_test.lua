@@ -32,6 +32,10 @@ local plugin = test.load({
             return { status_code = 200, body = fixture("9.0-releases.json"), headers = {} }
         elseif url:find("/8.0/releases.json", 1, true) then
             return { status_code = 200, body = fixture("8.0-releases.json"), headers = {} }
+        elseif url:find("/80.0/releases.json", 1, true) then
+            -- The index fixture also lists a 80.0 channel. It has no releases, and
+            -- it must not be mistaken for 8.0.
+            return { status_code = 200, body = '{"release-type":"sts","releases":[]}', headers = {} }
         end
         return { status_code = 404, body = "", headers = {} }
     end,

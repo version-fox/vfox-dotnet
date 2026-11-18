@@ -11,6 +11,10 @@ the pull requests.
   apphost pack before the runtime, so `vfox install dotnet@<version>-runtime`
   installed the apphost pack and left no `dotnet` executable. The archive is now
   chosen by its name, so every release that has a runtime installs it.
+- A failed request for release metadata now stops the listing and names the URL
+  and the HTTP status, instead of quietly leaving that channel out. Before, `latest`
+  could resolve to an older .NET while the newest channel could not be fetched, and
+  `vfox search` could show an incomplete list without an error.
 
 ## 0.3.2 (2026-11-17)
 
