@@ -17,11 +17,11 @@ vfox 会列出插件找到的 SDK，并让你选择要纳入哪一个。`vfox li
 ## 能找到哪些
 
 - 系统目录：Linux 和 macOS 上的 `/usr/share/dotnet`、`/usr/lib/dotnet`、`/usr/local/share/dotnet`、`/usr/local/dotnet`、`/opt/dotnet`、`/opt/microsoft/dotnet`；Windows 上的 `%ProgramFiles%\dotnet` 和 `%ProgramFiles(x86)%\dotnet`，winget、Chocolatey 和厂商安装程序也装在这里。
-- `~/.dotnet`（以及 `~/.local/share/dotnet`），即 `dotnet-install.sh` 和 `dotnet-install.ps1` 的默认目录。
+- `~/.dotnet`（以及 Linux 和 macOS 上的 `~/.local/share/dotnet`），即 `dotnet-install.sh` 和 `dotnet-install.ps1` 的默认目录。
 - Homebrew（`/opt/homebrew/share/dotnet`、`/usr/local/share/dotnet`、Linuxbrew）和 Scoop（`~/scoop/apps` 下任意应用的版本目录）。
 - asdf 和 mise（`~/.asdf/installs/dotnet/<版本>`、`~/.local/share/mise/installs/dotnet/<版本>`、`~/.mise/installs/dotnet/<版本>`）。
 - CI 运行器的工具缓存（`/opt/hostedtoolcache/dotnet`）。
-- `DOTNET_ROOT` 和 `DOTNET_HOME`。
+- `DOTNET_ROOT`；未设置 `DOTNET_ROOT` 时使用 `DOTNET_HOME`。
 
 一个 SDK 目录必须包含 `dotnet` 可执行文件，且 `sdk/` 下至少有一个版本。只有运行时、不能编译的目录不会被提供。
 vfox 自己管理的路径（`.vfox` 或 `$VFOX_HOME` 下）永远不会被提供，因此 vfox 安装的 SDK 不会被误认为另一份。

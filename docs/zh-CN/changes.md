@@ -4,9 +4,9 @@
 
 记录每个版本中用户可感知的变化。拉取请求列表见 GitHub 的发布页面。
 
-## 未发布
+## 0.3.5 (2026-11-18)
 
-- 未知版本（如 `dotnet@8.0.999`）不再报告安装成功。以前 vfox 会记录一个没有版本号的安装，`vfox list dotnet` 显示 `no available version`。现在安装会失败，并给出包含版本号和平台的错误，例如 `dotnet version 8.0.999 is not available for linux-x64`。
+- 未知版本（如 `dotnet@8.0.999`）不再报告安装成功。以前 vfox 会记录一个没有版本号的安装，`vfox list dotnet` 显示 `no available version`。现在安装会失败，并给出包含版本号和平台的错误，例如 `dotnet version 8.0.999 is not available for linux-x64`。`latest` 在该平台没有任何发行版时，会失败并提示 `no dotnet release is available for linux-x64`。
 
 ## 0.3.4 (2026-11-18)
 
@@ -25,9 +25,9 @@
 
 ## 0.3.2 (2026-11-17)
 
-- 将最低支持的 vfox 版本提升至 1.1.0,与 SDK 检测钩子、CI 和 E2E 测试已使用的版本一致。
+- 将最低支持的 vfox 版本提升至 1.1.0，与 SDK 检测钩子、CI 和 E2E 测试已使用的版本一致。
   使用旧版 vfox 的安装现在会收到升级提示。
-- 刷新文档:修正发布工作流的历史与 E2E 超时说明、修复失效链接,并补全检测 SDK 的路径列表。
+- 刷新文档：修正发布工作流的历史与 E2E 超时说明、修复失效链接，并补全检测 SDK 的路径列表。
 
 ## 0.3.1 (2026-11-17)
 

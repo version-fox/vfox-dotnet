@@ -20,11 +20,11 @@ where it is.
 ## What it finds
 
 - System locations: `/usr/share/dotnet`, `/usr/lib/dotnet`, `/usr/local/share/dotnet`, `/usr/local/dotnet`, `/opt/dotnet`, `/opt/microsoft/dotnet` on Linux and macOS; `%ProgramFiles%\dotnet` and `%ProgramFiles(x86)%\dotnet` on Windows, where winget, Chocolatey and the vendor installers land too.
-- `~/.dotnet` (and `~/.local/share/dotnet`), the defaults of `dotnet-install.sh` and `dotnet-install.ps1`.
+- `~/.dotnet` (and, on Linux and macOS, `~/.local/share/dotnet`), the defaults of `dotnet-install.sh` and `dotnet-install.ps1`.
 - Homebrew (`/opt/homebrew/share/dotnet`, `/usr/local/share/dotnet`, Linuxbrew) and Scoop (`~/scoop/apps`, any app's version directories).
 - asdf and mise (`~/.asdf/installs/dotnet/<version>`, `~/.local/share/mise/installs/dotnet/<version>`, `~/.mise/installs/dotnet/<version>`).
 - The CI runner tool cache (`/opt/hostedtoolcache/dotnet`).
-- `DOTNET_ROOT` and `DOTNET_HOME`.
+- `DOTNET_ROOT`, or `DOTNET_HOME` when `DOTNET_ROOT` is not set.
 
 An SDK home must have the `dotnet` executable and at least one version under
 `sdk/`. Runtime-only installations are not offered, because they cannot build

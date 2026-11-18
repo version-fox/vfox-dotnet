@@ -14,7 +14,7 @@
 #
 # License header check (Apache SkyWalking Eyes). Lua, Go, YAML, TOML, shell
 # and Dockerfiles are all covered. CI runs the check through
-# .github/workflows/license.yml; the local Docker command is in docs/e2e.md.
+# .github/workflows/license.yml; the local command is in docs/development.md.
 header:
   license:
     spdx-id: Apache-2.0

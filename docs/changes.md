@@ -5,9 +5,9 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
-## Unreleased
+## 0.3.5 (2026-11-18)
 
-- An unknown version, such as `dotnet@8.0.999`, no longer reports a successful install. vfox recorded an install with no version, and `vfox list dotnet` showed `no available version`. The install now fails with an error that names the version and the platform, for example `dotnet version 8.0.999 is not available for linux-x64`.
+- An unknown version, such as `dotnet@8.0.999`, no longer reports a successful install. vfox recorded an install with no version, and `vfox list dotnet` showed `no available version`. The install now fails with an error that names the version and the platform, for example `dotnet version 8.0.999 is not available for linux-x64`. A `latest` request with no release for the platform fails with `no dotnet release is available for linux-x64`.
 
 ## 0.3.4 (2026-11-18)
 
