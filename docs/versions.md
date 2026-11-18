@@ -9,13 +9,15 @@ you can install.
 
 ## Version syntax
 
-A version is one to three numeric parts. Each part narrows the lookup:
+A version is one to three numeric parts, or `latest`. Each numeric part narrows
+the lookup:
 
 | You write | What the plugin looks for |
 | --- | --- |
 | `8` | the first channel whose version starts with `8` (usually `8.0`) |
 | `8.0` | channel `8.0`; its newest stable release, or its newest preview when it has none |
 | `8.0.34` | release `8.0.34`; the SDK that ships with it |
+| `latest` | the newest stable release in any channel, or the newest preview when no release is stable |
 
 ```bash
 vfox install dotnet@8

@@ -109,7 +109,7 @@ local util = require("util")
 ```
 
 `test.load` 会安装模拟的 `RUNTIME`、`http` 和包搜索路径，因此测试不会访问网络。使用普通的 Lua
-`assert` 断言，并打印带用例数的 `PASS:` 行。需要真正执行 shell 命令的测试不应放在 `*_test.lua` 中，
+`assert` 断言，并打印一行 `PASS:` 提示，说明该文件检查了什么。需要真正执行 shell 命令的测试不应放在 `*_test.lua` 中，
 而应放入 E2E 测试。
 
 ## 发布

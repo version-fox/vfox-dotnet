@@ -127,8 +127,8 @@ local util = require("util")
 ```
 
 `test.load` installs a mock `RUNTIME`, `http` and package path, so tests never
-touch the network. Assert with plain Lua `assert` and print a `PASS:` line with
-the case count. Anything that must run real shell commands does not belong in
+touch the network. Assert with plain Lua `assert` and print a `PASS:` line that says
+what the file checked. Anything that must run real shell commands does not belong in
 a `*_test.lua` file; use an E2E suite instead.
 
 ## Releasing
