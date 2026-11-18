@@ -5,7 +5,7 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
-## Unreleased
+## 0.3.3 (2026-11-18)
 
 - Fixed `-runtime` for .NET 10 and later. Their runtime component lists the
   apphost pack before the runtime, so `vfox install dotnet@<version>-runtime`
