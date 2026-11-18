@@ -16,7 +16,11 @@
 | `lib/detect_dotnet.lua` | 通过 `sdk` 和运行时目录查找已安装的 SDK |
 | `Injection.lua` | vfox 注入对象的类型提示，不要修改 |
 | `tests/*_test.lua` | 由 `vfox plugin test` 运行的离线钩子测试 |
+| `tests/fixtures/` | 离线测试读取的发布元数据 JSON |
 | `tests/e2e/` | Ubuntu 和 Windows 端到端测试，参见 [e2e.md](e2e.md) |
+| `.github/workflows/` | CI：检查、离线测试、E2E 测试和发布工作流 |
+| `stylua.toml`、`.luarc.json`、`.licenserc.yaml` | Lua 格式化、LuaLS 设置和许可证头规则 |
+| `opencode.jsonc` | OpenCode 权限：允许执行的 `git push` 和 `gh pr` 命令 |
 
 ## 插件原理
 
@@ -117,4 +121,4 @@ local util = require("util")
 ## 发布
 
 参见[发布插件](../../README_CN.md#发布插件)。拉取请求只运行检查；发布通过 `workflow_dispatch` 手动
-指定稳定版本。发布时，请在 [changes.md](changes.md) 及其中文副本中添加带日期的章节。
+指定稳定版本。发布时，请在中英文两份更新日志中添加带日期的章节：[changes.md](changes.md) 和 [英文版](../changes.md)。

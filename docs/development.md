@@ -16,7 +16,11 @@
 | `lib/detect_dotnet.lua` | finding installed SDKs by their `sdk` and runtime directories |
 | `Injection.lua` | type hints for the objects vfox injects; never changed |
 | `tests/*_test.lua` | offline hook tests run by `vfox plugin test` |
+| `tests/fixtures/` | release metadata JSON read by the offline tests |
 | `tests/e2e/` | Ubuntu and Windows end-to-end suites, see [e2e.md](e2e.md) |
+| `.github/workflows/` | CI: checks, offline tests, E2E suites and the release workflow |
+| `stylua.toml`, `.luarc.json`, `.licenserc.yaml` | Lua formatting, LuaLS settings and license header rules |
+| `opencode.jsonc` | OpenCode permissions for `git push` and `gh pr` commands |
 
 ## How the plugin works
 
