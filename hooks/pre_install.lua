@@ -26,7 +26,14 @@ local util = require("util")
 function PLUGIN:PreInstall(ctx)
     local release = util:resolveVersion(ctx.version)
     if not release then
-        return {}
+        -- Never return an empty table: vfox records it as a successful install
+        -- with no version. Name the requested version and the platform instead.
+        local rid = util:getOsTypeAndArch().rid
+        local requested = ctx.version
+        if not requested or requested == "" or requested == "latest" then
+            error("no dotnet release is available for " .. rid, 0)
+        end
+        error("dotnet version " .. requested .. " is not available for " .. rid, 0)
     end
     return release
 end

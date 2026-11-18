@@ -45,6 +45,15 @@ local function resolve(version)
     return plugin:PreInstall({ version = version })
 end
 
+-- A version that matches no release must raise an error that names it. An empty
+-- table would be recorded by vfox as a successful install with no version.
+local function expectUnavailable(version)
+    local ok, err = pcall(resolve, version)
+    assert(not ok, version .. " must not resolve to a release")
+    local expected = "dotnet version " .. version .. " is not available for linux-x64"
+    assert(string.find(tostring(err), expected, 1, true), "unexpected error: " .. tostring(err))
+end
+
 -- Exact SDK versions keep the historical (unsuffixed) behaviour.
 local sdk = resolve("8.0.8")
 assert(sdk.version == "8.0.8")
@@ -57,7 +66,7 @@ assert(resolve("9").version == "9.0.0")
 assert(resolve("latest").version == "9.0.0")
 
 -- A numeric prefix must not match an unrelated, longer patch number.
-assert(resolve("8.0.3").version == "", "8.0.3 must not resolve to 8.0.34")
+expectUnavailable("8.0.3")
 
 -- A channel prefix must not match an unrelated channel ("8" vs "80.0").
 assert(resolve("8").url:find("Sdk/8.0.428/", 1, true))
@@ -78,7 +87,8 @@ assert(resolve("8-aspnetcore").version == "8.0.34-aspnetcore")
 assert(resolve("9.0.0-rc.2-runtime").sha512 == "runtime-hash-rc2")
 assert(resolve("9.0.0-rc.2-aspnetcore").sha512 == "aspnet-hash-rc2")
 
--- An unknown variant resolves to nothing rather than silently installing an SDK.
-assert(resolve("8.0.8-jre").version == "")
+-- An unknown variant or an unknown channel fails, rather than installing an SDK or an empty version.
+expectUnavailable("8.0.8-jre")
+expectUnavailable("99")
 
 print("PASS: version resolution across variants and partial versions")

@@ -5,6 +5,10 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
+## Unreleased
+
+- An unknown version, such as `dotnet@8.0.999`, no longer reports a successful install. vfox recorded an install with no version, and `vfox list dotnet` showed `no available version`. The install now fails with an error that names the version and the platform, for example `dotnet version 8.0.999 is not available for linux-x64`.
+
 ## 0.3.4 (2026-11-18)
 
 - A partial version such as `dotnet@11.0` or `dotnet@11`, and `latest`, now pick the newest stable release. A preview listed above the stable release used to be installed instead, and `latest` picked the preview of a newer channel that had no stable release yet. A channel with no stable release still installs its newest preview, and exact versions are unchanged.

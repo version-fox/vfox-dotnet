@@ -35,6 +35,8 @@ vfox 随后搜索这份列表。
 
 `resolveVersion` 还会把 `latest` 和空版本映射为 `Available` 返回的最新正式版；如果列表里全是预览版，则映射为最新的预览版。
 
+没有匹配的发行版时，`PreInstall` 会抛出错误而不是返回空表，因为 vfox 会把空表记录为没有版本号的成功安装。
+
 RID 映射位于 `lib/util.lua:getOsTypeAndArch`。增加平台时，请同时修改这里和
 [versions.md](versions.md#平台) 中的平台表格。
 

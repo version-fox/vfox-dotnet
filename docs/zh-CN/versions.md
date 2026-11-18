@@ -24,6 +24,8 @@ vfox install dotnet@8.0.34
 
 单独的主版本号会保留在主版本号级别，而不是补成 `8.0`，这样像 `9.1` 这样的通道也仍然可以被找到。
 
+在当前平台上没有匹配发行版的版本会让 `vfox install` 失败，错误信息会给出该版本号和平台，例如 `dotnet version 8.0.999 is not available for linux-x64`，且不会安装任何内容。
+
 `vfox search dotnet` 会列出所有通道中每个可安装的变体，方括号内是发行版及其组件的版本。插件返回完整列表，
 搜索条件由 vfox 应用：
 
