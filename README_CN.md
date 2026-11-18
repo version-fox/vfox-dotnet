@@ -25,8 +25,8 @@ dotnet --version
 版本号可以是 .NET 通道，也可以是完整的发布版本：
 
 ```
-vfox install dotnet@8        # 8.x 系列中最新的发布版本
-vfox install dotnet@8.0      # 8.0 通道中最新的发布版本
+vfox install dotnet@8        # 8.x 系列中最新的正式版
+vfox install dotnet@8.0      # 8.0 通道中最新的正式版
 vfox install dotnet@8.0.34   # 指定的 .NET 发布版本，安装 SDK
 ```
 

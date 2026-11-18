@@ -17,7 +17,7 @@ local util = require("util")
 --- @class PreInstallContext
 --- @field version string User-input version, optionally with a variant suffix
 ---                       (-runtime or -aspnetcore). Partial versions such as
----                       "8" and "8.0" resolve to the newest release.
+---                       "8" and "8.0" resolve to the newest stable release.
 
 --- Returns some pre-installed information, such as version number, download address, local files, etc.
 --- If checksum is provided, vfox will automatically check it for you.

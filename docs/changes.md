@@ -5,7 +5,7 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
-## Unreleased
+## 0.3.4 (2026-11-18)
 
 - A partial version such as `dotnet@11.0` or `dotnet@11`, and `latest`, now pick the newest stable release. A preview listed above the stable release used to be installed instead, and `latest` picked the preview of a newer channel that had no stable release yet. A channel with no stable release still installs its newest preview, and exact versions are unchanged.
 
