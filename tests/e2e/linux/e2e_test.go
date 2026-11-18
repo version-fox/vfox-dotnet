@@ -127,7 +127,10 @@ func checkMiseListing(t *testing.T, ctx context.Context, ctr tc.Container, versi
 	t.Helper()
 	execOK(ctx, t, ctr, `plugins="$HOME/.local/share/mise/plugins"; mkdir -p "$plugins" `+
 		`&& rm -rf "$plugins/vfox-version-fox-vfox-dotnet" && cp -r /e2e "$plugins/vfox-version-fox-vfox-dotnet"`)
-	script := `mise ls-remote "vfox:version-fox/vfox-dotnet"`
+	// mise limits the whole listing, which downloads the metadata of every
+	// channel, to fetch_remote_versions_timeout (20s by default). A slow network
+	// can exceed that, so the step raises it; a broken listing still fails fast.
+	script := `MISE_FETCH_REMOTE_VERSIONS_TIMEOUT=300 mise ls-remote "vfox:version-fox/vfox-dotnet"`
 	out := execRetry(ctx, t, ctr, script, script)
 	listed := strings.Fields(common.StripANSI(out))
 	channel := common.MajorMinor(version)

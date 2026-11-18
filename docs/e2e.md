@@ -42,7 +42,9 @@ Both suites follow the same steps (step 4 runs in the Linux suite only):
    `mise ls-remote "vfox:version-fox/vfox-dotnet"`, which lists every release of
    every channel. The SDK, runtime and ASP.NET Core Runtime of the channel must
    all be listed. mise decodes a JSON null differently from vfox, so this is the
-   step that catches issue #17. Only metadata is downloaded.
+   step that catches issue #17. Only metadata is downloaded. The step sets
+   `MISE_FETCH_REMOTE_VERSIONS_TIMEOUT=300`, because mise limits the whole listing
+   to 20 seconds by default and a slow network can exceed that.
 5. Run `vfox install dotnet@<version>`, which downloads and unpacks the SDK,
    and assert that vfox verified the download against the checksum in the
    release metadata.

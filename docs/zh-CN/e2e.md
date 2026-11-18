@@ -37,6 +37,8 @@ tests/e2e/
 4. 仅 Linux：把同一个插件复制到 mise 的插件目录，运行 `mise ls-remote "vfox:version-fox/vfox-dotnet"`，
    列出所有通道的每个发布版本。该通道的 SDK、runtime 和 ASP.NET Core Runtime 都必须被列出。
    mise 对 JSON `null` 的解析与 vfox 不同，因此由这一步发现 #17 问题；只下载元数据。
+   这一步设置了 `MISE_FETCH_REMOTE_VERSIONS_TIMEOUT=300`：mise 默认把整个列表限制在 20 秒内，
+   慢网络下可能超过这个时限。
 5. 运行 `vfox install dotnet@<版本>`，下载并解压 SDK，并断言 vfox 用发布元数据中的校验和
    验证了下载内容。
 6. 激活 vfox，运行 `vfox use --global dotnet@<版本>`，并用 `vfox env -s <shell>` 应用环境。
