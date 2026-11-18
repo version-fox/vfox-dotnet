@@ -36,12 +36,12 @@ vfox searches that list.
 `PreInstall` strips a known variant suffix, parses the remaining version into a
 channel (`8` → `8`, `8.0` → `8.0`, `8.0.34` → `8.0`), fetches only that channel and
 that variant, and resolves an exact version first, then a partial version on
-component boundaries (`8.0.3` does not match `8.0.34`). The `addition` field
-carries the component version and label. vfox verifies the checksum before
-unpacking.
+component boundaries (`8.0.3` does not match `8.0.34`), taking the newest stable
+release among the matches. The `addition` field carries the component version and
+label. vfox verifies the checksum before unpacking.
 
-`resolveVersion` also maps `latest` and an empty version to the newest release
-returned by `Available`.
+`resolveVersion` also maps `latest` and an empty version to the newest stable
+release returned by `Available`, or to the newest preview when none is stable.
 
 The RID mapping lives in `lib/util.lua:getOsTypeAndArch`. When adding a platform,
 change it there and in the platform table in [versions.md](versions.md#platforms).
