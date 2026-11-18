@@ -28,6 +28,8 @@ vfox install dotnet@8.0.34
 A bare major is deliberately kept at the major, not turned into `8.0`, so a
 channel such as `9.1` can still be found.
 
+A version that matches no release for your platform fails `vfox install` with an error that names it, such as `dotnet version 8.0.999 is not available for linux-x64`. Nothing is installed in that case.
+
 `vfox search dotnet` lists every installable variant of every release, with the
 distribution and the version of its component in brackets. The plugin returns the
 whole list; vfox applies the search query:

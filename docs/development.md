@@ -43,6 +43,8 @@ label. vfox verifies the checksum before unpacking.
 `resolveVersion` also maps `latest` and an empty version to the newest stable
 release returned by `Available`, or to the newest preview when none is stable.
 
+When no release matches, `PreInstall` raises an error instead of returning an empty table, because vfox would record an empty table as a successful install with no version.
+
 The RID mapping lives in `lib/util.lua:getOsTypeAndArch`. When adding a platform,
 change it there and in the platform table in [versions.md](versions.md#platforms).
 

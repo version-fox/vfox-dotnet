@@ -40,8 +40,12 @@ assert(plugin:PreInstall({ version = "8.0.34-runtime" }).sha512 == "runtime-osx-
 assert(plugin:PreInstall({ version = "8.0.34-aspnetcore" }).sha512 == "aspnet-osx-hash-34")
 assert(plugin:PreInstall({ version = "8.0.34" }).sha512 == "sdk-osx-hash-34")
 
--- Releases without an asset for this platform are skipped.
-assert(plugin:PreInstall({ version = "8.0.8-runtime" }).version == "")
+-- Releases without an asset for this platform are skipped, so nothing matches and
+-- the error names the platform.
+local ok, err = pcall(plugin.PreInstall, plugin, { version = "8.0.8-runtime" })
+assert(not ok, "a release without an osx-arm64 asset must not resolve")
+local expected = "dotnet version 8.0.8-runtime is not available for osx-arm64"
+assert(string.find(tostring(err), expected, 1, true), tostring(err))
 assert(plugin:PreInstall({ version = "8-runtime" }).version == "8.0.34-runtime")
 
 print("PASS: osx-arm64 variant selection for every distribution")
