@@ -38,7 +38,9 @@ vfox 随后搜索这份列表。
 RID 映射位于 `lib/util.lua:getOsTypeAndArch`。增加平台时，请同时修改这里和
 [versions.md](versions.md#平台) 中的平台表格。
 
-结果会在一个 vfox 进程的生命周期内缓存，因为运行时操作系统和架构在此其间不会变化。
+在同一个 vfox 进程中，每个发布元数据文档只获取一次，操作系统和架构也只读取一次，因为两者在运行期间都不会变化。
+获取或解析某个文档失败时，整个列表会报错并给出该 URL，不会悄悄漏掉某个通道。JSON 为 `null` 的组件会被跳过，
+例如 1.0 到 2.0 通道的 ASP.NET Core Runtime。
 
 ## 检测已安装的 SDK
 
@@ -54,7 +56,7 @@ RID 映射位于 `lib/util.lua:getOsTypeAndArch`。增加平台时，请同时�
 
 ## 本地检查
 
-所有检查都会在 CI 中运行；本地只需要 Docker。在仓库根目录执行：
+所有检查都会在 CI 中运行。Docker 可以运行 Lua 检查和离线钩子测试；许可证、工作流和 Go 检查还需要本机安装 Go。在仓库根目录执行：
 
 ```bash
 # Lua 格式化（stylua 2.5.2）
@@ -71,12 +73,13 @@ docker run --rm -v "$PWD:/work" -w /work ubuntu:24.04 bash -c \
    mkdir -p /opt/luals && tar -xzf /tmp/l.tgz -C /opt/luals && \
    /opt/luals/bin/lua-language-server --check . --checklevel=Warning'
 
-# 离线钩子测试（vfox 1.1.0）
+# 离线钩子测试（vfox 1.1.0）。先在仓库根目录构建一次镜像：
+# docker build --file tests/e2e/linux/Dockerfile --tag vfox-dotnet-e2e:linux .
 docker run --rm -v "$PWD:/work" -w /work vfox-dotnet-e2e:linux vfox plugin test .
 
 # 许可证头检查（SkyWalking Eyes 0.9.0）
-GOBIN=/tmp/opencode/bin go install github.com/apache/skywalking-eyes/cmd/license-eye@v0.9.0
-/tmp/opencode/bin/license-eye -c .licenserc.yaml header check
+go install github.com/apache/skywalking-eyes/cmd/license-eye@v0.9.0
+"$(go env GOPATH)/bin/license-eye" -c .licenserc.yaml header check
 
 # 工作流检查（actionlint 1.7.12）
 go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
@@ -111,5 +114,5 @@ local util = require("util")
 
 ## 发布
 
-参见[发布插件](../README_CN.md#发布插件)。拉取请求只运行检查；发布通过 `workflow_dispatch` 手动
+参见[发布插件](../../README_CN.md#发布插件)。拉取请求只运行检查；发布通过 `workflow_dispatch` 手动
 指定稳定版本。发布时，请在 [changes.md](changes.md) 及其中文副本中添加带日期的章节。

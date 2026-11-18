@@ -27,8 +27,8 @@ A bare major is deliberately kept at the major, not turned into `8.0`, so a
 channel such as `9.1` can still be found.
 
 `vfox search dotnet` lists every installable variant of every release, with the
-distribution and SDK version in brackets. The plugin returns the whole list;
-vfox applies the search query:
+distribution and the version of its component in brackets. The plugin returns the
+whole list; vfox applies the search query:
 
 ```
 vfox search dotnet

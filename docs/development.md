@@ -46,8 +46,11 @@ release returned by `Available`, or to the newest preview when none is stable.
 The RID mapping lives in `lib/util.lua:getOsTypeAndArch`. When adding a platform,
 change it there and in the platform table in [versions.md](versions.md#platforms).
 
-The result is cached for the lifetime of one vfox process because the runtime
-OS and architecture cannot change while it runs.
+Within one vfox process each release metadata document is fetched once, and the
+OS and architecture are read once, because neither changes while it runs. If a
+document cannot be fetched or decoded, the whole listing fails with an error that
+names its URL, so no channel is left out silently. A component that is JSON
+`null`, such as the ASP.NET Core Runtime of the 1.0 to 2.0 channels, is skipped.
 
 ## Detecting installed SDKs
 
@@ -67,7 +70,8 @@ synthetic system SDK as a final check that vfox can use the result.
 
 ## Local checks
 
-Every check runs in CI; Docker is enough to run all of them locally. From the
+Every check runs in CI. Docker runs the Lua checks and the offline hook tests;
+the license, workflow and Go checks also need Go on the host. From the
 repository root:
 
 ```bash
@@ -85,12 +89,13 @@ docker run --rm -v "$PWD:/work" -w /work ubuntu:24.04 bash -c \
    mkdir -p /opt/luals && tar -xzf /tmp/l.tgz -C /opt/luals && \
    /opt/luals/bin/lua-language-server --check . --checklevel=Warning'
 
-# Offline hook tests (vfox 1.1.0)
+# Offline hook tests (vfox 1.1.0). Build the image once from the repository root:
+# docker build --file tests/e2e/linux/Dockerfile --tag vfox-dotnet-e2e:linux .
 docker run --rm -v "$PWD:/work" -w /work vfox-dotnet-e2e:linux vfox plugin test .
 
 # License headers (SkyWalking Eyes 0.9.0)
-GOBIN=/tmp/opencode/bin go install github.com/apache/skywalking-eyes/cmd/license-eye@v0.9.0
-/tmp/opencode/bin/license-eye -c .licenserc.yaml header check
+go install github.com/apache/skywalking-eyes/cmd/license-eye@v0.9.0
+"$(go env GOPATH)/bin/license-eye" -c .licenserc.yaml header check
 
 # Workflow lint (actionlint 1.7.12)
 go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12

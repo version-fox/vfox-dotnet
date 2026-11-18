@@ -29,7 +29,7 @@ A version is a .NET channel or a full release version:
 ```
 vfox install dotnet@8        # newest release in the 8.x line
 vfox install dotnet@8.0      # newest release in the 8.0 channel
-vfox install dotnet@8.0.34   # a specific runtime release
+vfox install dotnet@8.0.34   # a specific .NET release, installed as the SDK
 ```
 
 `vfox search dotnet 8.0` lists the releases the plugin knows about. See
