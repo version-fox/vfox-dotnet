@@ -17,7 +17,7 @@ tests/e2e/
 ├── doc.go
 ├── common/              retry, version and output parsing shared by both suites
 ├── linux/
-│   ├── Dockerfile       Ubuntu 24.04 with the .NET native libraries and pinned vfox
+│   ├── Dockerfile       Ubuntu 24.04 with the .NET native libraries, pinned vfox and pinned mise
 │   ├── exec.go          bash exec helpers
 │   └── e2e_test.go      TestE2E
 └── windows/
@@ -29,7 +29,7 @@ tests/e2e/
 
 ## What the suites do
 
-Both suites follow the same steps:
+Both suites follow the same steps (step 4 runs in the Linux suite only):
 
 1. Install a pinned vfox (1.1.0, with its archive checksum checked). In the
    Linux image it is baked in at build time; the Windows test downloads it
@@ -38,18 +38,23 @@ Both suites follow the same steps:
    `dotnet` plugin, so the checked-out source is tested rather than a released
    version.
 3. Run `vfox search dotnet <version>`.
-4. Run `vfox install dotnet@<version>`, which downloads and unpacks the SDK,
+4. Linux only: copy the same plugin into mise's plugin directory and run
+   `mise ls-remote "vfox:version-fox/vfox-dotnet"`, which lists every release of
+   every channel. The SDK, runtime and ASP.NET Core Runtime of the channel must
+   all be listed. mise decodes a JSON null differently from vfox, so this is the
+   step that catches issue #17. Only metadata is downloaded.
+5. Run `vfox install dotnet@<version>`, which downloads and unpacks the SDK,
    and assert that vfox verified the download against the checksum in the
    release metadata.
-5. Activate vfox, run `vfox use --global dotnet@<version>`, and apply the
+6. Activate vfox, run `vfox use --global dotnet@<version>`, and apply the
    environment with `vfox env -s <shell>`.
-6. Assert that `DOTNET_ROOT` is set and exists, that `vfox current dotnet`
+7. Assert that `DOTNET_ROOT` is set and exists, that `vfox current dotnet`
    reports the release, that `dotnet --version` matches the requested major and
    minor, and that `dotnet --list-sdks` lists the SDK.
-7. Create a synthetic SDK home in a system location and run
+8. Create a synthetic SDK home in a system location and run
    `vfox link --detect -y dotnet`, then verify the linked version appears in
    `vfox list dotnet` (and can be used on Linux). This exercises the `Detect`
-   hook with a real vfox process; the SDK installed in step 4 lives under
+   hook with a real vfox process; the SDK installed in step 5 lives under
    `.vfox` and is deliberately excluded from detection.
 
 Every network-touching call goes through `common.Retry` (three attempts by
@@ -104,3 +109,6 @@ To upgrade vfox, change the pinned version and SHA-256 checksums in the Linux
 Dockerfile, `tests/e2e/windows/e2e_test.go` and `.github/workflows/test.yml`
 together, and recompute the checksums of the release archives before updating
 them.
+
+To upgrade mise, change `MISE_VERSION` and `MISE_SHA256` in the Linux Dockerfile,
+and check the checksum against the digest GitHub reports for the release asset.

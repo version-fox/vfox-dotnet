@@ -13,8 +13,9 @@
 # limitations under the License.
 
 # The Ubuntu E2E target: a clean machine with the native libraries a .NET
-# SDK needs and a pinned vfox. No SDK here on purpose: dotnet may only come
-# from what vfox installs. The Go test drives every phase through exec calls.
+# SDK needs, a pinned vfox and a pinned mise. No SDK here on purpose: dotnet
+# may only come from what vfox installs. The Go test drives every phase
+# through exec calls.
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -41,6 +42,20 @@ RUN curl --fail --silent --show-error --location --output /tmp/vfox.tar.gz \
     && install --mode=0755 /tmp/vfox-extract/vfox /usr/local/bin/vfox \
     && rm --recursive --force /tmp/vfox-extract /tmp/vfox.tar.gz \
     && vfox --version
+
+# mise decodes a JSON null differently from vfox, and issue #17 only shows up
+# there, so the listing is checked through mise as well.
+ARG MISE_VERSION=2026.10.21
+ARG MISE_SHA256=f56cc56b462eaae60aa7a33dffd24f641847b52e098b69e4a5064c4b8bbe03cb
+RUN curl --fail --silent --show-error --location --output /tmp/mise.tar.gz \
+        "https://github.com/jdx/mise/releases/download/v${MISE_VERSION}/mise-v${MISE_VERSION}-linux-x64.tar.gz" \
+    && echo "${MISE_SHA256}  /tmp/mise.tar.gz" | sha256sum --check \
+    && mkdir /tmp/mise-extract \
+    && tar --extract --gzip --file /tmp/mise.tar.gz --directory /tmp/mise-extract --strip-components=2 \
+        "mise/bin/mise" \
+    && install --mode=0755 /tmp/mise-extract/mise /usr/local/bin/mise \
+    && rm --recursive --force /tmp/mise-extract /tmp/mise.tar.gz \
+    && mise --version
 
 COPY metadata.lua /e2e/metadata.lua
 COPY hooks /e2e/hooks
