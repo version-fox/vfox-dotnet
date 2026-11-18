@@ -9,6 +9,9 @@
 - 修复 .NET 10 及更高版本的 `-runtime`：其 runtime 组件把 apphost 包排在运行时之前，因此
   `vfox install dotnet@<版本>-runtime` 会安装 apphost 包，且没有 `dotnet` 可执行文件。现在按文件名
   选择运行时压缩包，所有提供运行时的发布版本都会正确安装运行时。
+- 修复列出版本或安装某个变体时出现的 `attempt to index local 'component'` 错误。发布元数据把部分组件
+  写成 `null`，例如 1.0、1.1 和 2.0 通道的 ASP.NET Core Runtime。mise 把这个 `null` 读成无法索引的值，
+  导致整个列表失败。现在会跳过为 `null` 的组件。
 - 获取发布元数据失败时，列表现在会报错并给出 URL 和 HTTP 状态，不再悄悄漏掉该通道。以前最新通道
   获取失败时，`latest` 可能解析到更旧的 .NET，`vfox search` 也会返回不完整的列表而不报错。
 

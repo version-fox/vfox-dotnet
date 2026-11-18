@@ -11,6 +11,11 @@ the pull requests.
   apphost pack before the runtime, so `vfox install dotnet@<version>-runtime`
   installed the apphost pack and left no `dotnet` executable. The archive is now
   chosen by its name, so every release that has a runtime installs it.
+- Fixed the `attempt to index local 'component'` error when listing versions or
+  installing a variant. The release metadata lists some components as `null`,
+  such as the ASP.NET Core Runtime of the 1.0, 1.1 and 2.0 channels. mise reads
+  that `null` as a value that cannot be indexed, which failed the whole list.
+  Components that are `null` are now skipped.
 - A failed request for release metadata now stops the listing and names the URL
   and the HTTP status, instead of quietly leaving that channel out. Before, `latest`
   could resolve to an older .NET while the newest channel could not be fetched, and

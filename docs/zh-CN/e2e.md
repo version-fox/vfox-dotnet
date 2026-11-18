@@ -15,7 +15,7 @@ tests/e2e/
 ├── doc.go
 ├── common/              两个套件共用的重试、版本和输出解析
 ├── linux/
-│   ├── Dockerfile       Ubuntu 24.04，包含 .NET 原生依赖和固定版本的 vfox
+│   ├── Dockerfile       Ubuntu 24.04，包含 .NET 原生依赖以及固定版本的 vfox 和 mise
 │   ├── exec.go          bash exec 辅助函数
 │   └── e2e_test.go      TestE2E
 └── windows/
@@ -27,21 +27,26 @@ tests/e2e/
 
 ## 测试内容
 
-两个套件执行相同的步骤：
+两个套件执行相同的步骤（第 4 步仅 Linux 套件运行）：
 
 1. 安装固定版本的 vfox（1.1.0，并校验归档的 SHA-256）。Linux 镜像在构建时把它装入镜像；
    Windows 测试从发布归档下载并暂存 `vfox.exe`。
 2. 把 `metadata.lua`、`hooks` 和 `lib` 打包成 ZIP，作为本地 `dotnet` 插件添加，
    从而测试当前检出的源码，而非已发布的版本。
 3. 运行 `vfox search dotnet <版本>`。
-4. 运行 `vfox install dotnet@<版本>`，下载并解压 SDK，并断言 vfox 用发布元数据中的校验和
+4. 仅 Linux：把同一个插件复制到 mise 的插件目录，运行 `mise ls-remote "vfox:version-fox/vfox-dotnet"`，
+   列出所有通道的每个发布版本。该通道的 SDK、runtime 和 ASP.NET Core Runtime 都必须被列出。
+   mise 对 JSON `null` 的解析与 vfox 不同，因此由这一步发现 #17 问题；只下载元数据。
+   这一步设置了 `MISE_FETCH_REMOTE_VERSIONS_TIMEOUT=300`：mise 默认把整个列表限制在 20 秒内，
+   慢网络下可能超过这个时限。
+5. 运行 `vfox install dotnet@<版本>`，下载并解压 SDK，并断言 vfox 用发布元数据中的校验和
    验证了下载内容。
-5. 激活 vfox，运行 `vfox use --global dotnet@<版本>`，并用 `vfox env -s <shell>` 应用环境。
-6. 断言 `DOTNET_ROOT` 已设置且目录存在、`vfox current dotnet` 报告选中的发布版本、
+6. 激活 vfox，运行 `vfox use --global dotnet@<版本>`，并用 `vfox env -s <shell>` 应用环境。
+7. 断言 `DOTNET_ROOT` 已设置且目录存在、`vfox current dotnet` 报告选中的发布版本、
    `dotnet --version` 与请求的主次版本号一致，且 `dotnet --list-sdks` 列出了该 SDK。
-7. 在系统位置创建一个模拟的 SDK 主目录，运行 `vfox link --detect -y dotnet`，然后验证链接的版本
+8. 在系统位置创建一个模拟的 SDK 主目录，运行 `vfox link --detect -y dotnet`，然后验证链接的版本
    出现在 `vfox list dotnet` 中（Linux 上还可正常使用）。这会在真实 vfox 进程中验证 `Detect` 钩子；
-   第 4 步安装的 SDK 位于 `.vfox` 下，会被刻意排除在检测之外。
+   第 5 步安装的 SDK 位于 `.vfox` 下，会被刻意排除在检测之外。
 
 所有涉及网络调用都经过 `common.Retry`（默认三次，10s/20s 退避），因为临时容器中的下载和进程调用
 偶尔会失败。任何断言失败都会停止测试，并打印相关命令的输出。
@@ -87,3 +92,5 @@ go test -v -timeout 55m -run TestE2E ./windows
 升级 vfox 时，请同时修改 Linux Dockerfile、`tests/e2e/windows/e2e_test.go` 和
 `.github/workflows/test.yml` 中的固定版本与 SHA-256 校验和，并在更新校验和之前重新计算发布归档的
 SHA-256。
+
+升级 mise 时，请修改 Linux Dockerfile 中的 `MISE_VERSION` 和 `MISE_SHA256`，并对照 GitHub 为该发布资产给出的 digest 核对校验和。

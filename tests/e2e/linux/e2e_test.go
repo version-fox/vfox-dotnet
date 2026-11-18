@@ -14,14 +14,15 @@
 
 // Package linux is the Ubuntu container E2E suite, driven from Go through
 // testcontainers-go. TestE2E builds the image once, starts one long-lived
-// container and drives setup -> search -> install -> use -> verify -> detect
-// through exec calls, asserting in Go.
+// container and drives setup -> search -> mise listing -> install -> use ->
+// verify -> detect through exec calls, asserting in Go.
 package linux
 
 import (
 	"context"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -31,8 +32,9 @@ import (
 	"github.com/version-fox/vfox-dotnet/tests/e2e/common"
 )
 
-// TestE2E installs a real .NET SDK through the plugin, uses it and links a
-// synthetic system SDK. Scope the version locally with DOTNET_VERSION=9.0.
+// TestE2E lists the releases through mise, installs a real .NET SDK through
+// the plugin, uses it and links a synthetic system SDK. Scope the version
+// locally with DOTNET_VERSION=9.0.
 func TestE2E(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skip container E2E in short mode")
@@ -52,6 +54,7 @@ func TestE2E(t *testing.T) {
 	version := common.Version()
 	setupVfox(t, ctx, ctr)
 	checkSearch(t, ctx, ctr, version)
+	checkMiseListing(t, ctx, ctr, version)
 	installed := installDotnet(t, ctx, ctr, version)
 	useDotnet(t, ctx, ctr, installed)
 	verifyToolchain(t, ctx, ctr, version, installed)
@@ -114,6 +117,41 @@ func checkSearch(t *testing.T, ctx context.Context, ctr tc.Container, version st
 		t.Fatalf("vfox search dotnet %s listed no versions\n--- output ---\n%s", version, out)
 	}
 	t.Logf("PASS vfox search dotnet %s lists versions", version)
+}
+
+// checkMiseListing lists every release through mise. vfox reads the same
+// metadata without failing, but mise hands a JSON null to the plugin as a
+// value it cannot index, so only mise reproduces issue #17. The listing
+// downloads metadata only; no SDK is installed here.
+func checkMiseListing(t *testing.T, ctx context.Context, ctr tc.Container, version string) {
+	t.Helper()
+	execOK(ctx, t, ctr, `plugins="$HOME/.local/share/mise/plugins"; mkdir -p "$plugins" `+
+		`&& rm -rf "$plugins/vfox-version-fox-vfox-dotnet" && cp -r /e2e "$plugins/vfox-version-fox-vfox-dotnet"`)
+	// mise limits the whole listing, which downloads the metadata of every
+	// channel, to fetch_remote_versions_timeout (20s by default). A slow network
+	// can exceed that, so the step raises it; a broken listing still fails fast.
+	script := `MISE_FETCH_REMOTE_VERSIONS_TIMEOUT=300 mise ls-remote "vfox:version-fox/vfox-dotnet"`
+	out := execRetry(ctx, t, ctr, script, script)
+	listed := strings.Fields(common.StripANSI(out))
+	channel := common.MajorMinor(version)
+	for _, suffix := range []string{"", "-runtime", "-aspnetcore"} {
+		if !listsRelease(listed, channel, suffix) {
+			t.Fatalf("mise ls-remote lists no %s%s release\n--- output ---\n%s", channel, suffix, out)
+		}
+	}
+	t.Logf("PASS mise ls-remote lists the SDK, runtime and ASP.NET Core Runtime of %s (%d entries)", channel, len(listed))
+}
+
+// listsRelease reports whether listed holds a release of channel with the
+// given variant suffix: 8.0.34 for the SDK, 8.0.34-runtime for the runtime.
+func listsRelease(listed []string, channel, suffix string) bool {
+	re := regexp.MustCompile(`^` + regexp.QuoteMeta(channel) + `\.\d+` + regexp.QuoteMeta(suffix) + `$`)
+	for _, version := range listed {
+		if re.MatchString(version) {
+			return true
+		}
+	}
+	return false
 }
 
 // installDotnet installs the channel and returns the release vfox recorded,
