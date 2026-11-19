@@ -14,7 +14,7 @@ the lookup:
 
 | You write | What the plugin looks for |
 | --- | --- |
-| `8` | the first channel whose version starts with `8` (usually `8.0`) |
+| `8` | the newest stable release of every channel whose version starts with `8` (usually only `8.0`) |
 | `8.0` | channel `8.0`; its newest stable release, or its newest preview when it has none |
 | `8.0.34` | release `8.0.34`; the SDK that ships with it |
 | `latest` | the newest stable release in any channel, or the newest preview when no release is stable |
@@ -26,7 +26,9 @@ vfox install dotnet@8.0.34
 ```
 
 A bare major is deliberately kept at the major, not turned into `8.0`, so a
-channel such as `9.1` can still be found.
+channel such as `9.1` can still be found. A bare major can also cover several
+channels: `2` covers 2.0, 2.1 and 2.2, and installs the newest stable release among
+them, not the first channel that Microsoft's index lists.
 
 A version that matches no release for your platform fails `vfox install` with an error that names it, such as `dotnet version 8.0.999 is not available for linux-x64`. Nothing is installed in that case.
 
@@ -147,4 +149,6 @@ plus `libssl3` and `zlib1g` before running `dotnet` for the first time.
 
 The release metadata publishes a SHA-512 `hash` for each binaries file. The
 plugin passes it to vfox, which verifies the download before unpacking it. A
-download that does not match is rejected and nothing is installed.
+download that does not match is rejected and nothing is installed. A binaries
+file that Microsoft publishes without a SHA-512 is not listed, because vfox would
+install it without checking it.

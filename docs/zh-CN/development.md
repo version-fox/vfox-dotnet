@@ -26,15 +26,17 @@
 
 `Available` 读取[发布索引](https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json)，
 再读取每个通道的 `releases.json`。对每个发布版本和每个发行版变体，它会选择与当前平台 RID 匹配、
-文件名以变体的包名开头（`dotnet-sdk-`、`dotnet-runtime-` 或 `aspnetcore-runtime-`）、且 URL 以
+文件名以变体的包名开头（`dotnet-sdk-`、`dotnet-runtime-`、`aspnetcore-runtime-`，以及 .NET Core 2.0 的
+ASP.NET Core Runtime 所用的 `dotnet-hosting-`）、且 URL 以
 `.tar.gz` 或 `.zip` 结尾的 *Binaries* 文件，并记录随发布提供的 SHA-512 作为 `sha512`。文件名决定选择
 哪个文件：.NET 10 及更高版本的 `runtime` 组件还会在运行时之前列出 apphost 包。安装程序和 ASP.NET
-composite 压缩包会被忽略。变体包括 SDK（无后缀）、`-runtime` 和
+composite 压缩包会被忽略，没有 SHA-512 的压缩包也会被忽略，因为 vfox 会在不校验的情况下安装它。
+变体包括 SDK（无后缀）、`-runtime` 和
 `-aspnetcore`，分别取自发布元数据中的 `sdk`、`runtime` 和 `aspnetcore-runtime` 组件。
 vfox 随后搜索这份列表。
 
 `PreInstall` 先去掉已知的变体后缀，再把剩余版本解析为通道（`8` → `8`、`8.0` → `8.0`、
-`8.0.34` → `8.0`），只抓取该通道和该变体，并优先匹配精确版本，然后按组件边界匹配部分版本
+`8.0.34` → `8.0`），只抓取版本指定的通道和该变体（主版本号如 `2` 会抓取 2.0、2.1 和 2.2，并按从新到旧排序，因为索引里 2.1 排在 2.2 之前），并优先匹配精确版本，然后按组件边界匹配部分版本
 （`8.0.3` 不会匹配 `8.0.34`），并在匹配项中选择最新的正式版。`addition` 字段携带组件的版本和名称。vfox 会在解压前校验校验和。
 
 `resolveVersion` 还会把 `latest` 和空版本映射为 `Available` 返回的最新正式版；如果列表里全是预览版，则映射为最新的预览版。
@@ -46,7 +48,7 @@ RID 映射位于 `lib/util.lua:getOsTypeAndArch`。增加平台时，请同时�
 
 在同一个 vfox 进程中，每个发布元数据文档只获取一次，操作系统和架构也只读取一次，因为两者在运行期间都不会变化。
 获取或解析某个文档失败时，整个列表会报错并给出该 URL，不会悄悄漏掉某个通道。JSON 为 `null` 的组件会被跳过，
-例如 1.0 到 2.0 通道的 ASP.NET Core Runtime。
+例如 2.0.4 或多数 1.0 版本的 ASP.NET Core Runtime。
 
 ## 检测已安装的 SDK
 
