@@ -78,7 +78,7 @@ local function add_sdk(home, runtime)
     end
 end
 
--- A system install, dotnet-install.ps1's home and a Scoop app are all found;
+-- A system install, the dotnet-install.sh home and a Scoop app are all found;
 -- Scoop keeps builds two levels down. Each carries a different version so
 -- none is dropped as a duplicate.
 add_sdk("C:\\Program Files\\dotnet", "8.0.34")
@@ -93,7 +93,7 @@ for _, item in ipairs(found) do
     by_note[item.note] = item
 end
 assert(by_note["system SDK"].path == "C:\\Program Files\\dotnet", "system SDK path")
-assert(by_note["installed by dotnet-install.ps1"].path == "C:\\Users\\test\\.dotnet", "dotnet-install.ps1 home")
+assert(by_note["installed by dotnet-install.sh"].path == "C:\\Users\\test\\.dotnet", "dotnet-install.sh home")
 assert(by_note["installed by Scoop"].path == "C:\\Users\\test\\scoop\\apps\\dotnet-sdk\\current", "Scoop app")
 assert(found[1].version == "9.0.5", "newest SDK first")
 

@@ -193,9 +193,10 @@ function detect.candidate_roots()
         if programfiles_x86 and programfiles_x86 ~= "" then
             add(child(programfiles_x86, "dotnet"), "system SDK")
         end
-        -- dotnet-install.ps1 defaults to ~/.dotnet; Scoop, asdf and mise
+        -- dotnet-install.sh defaults to ~/.dotnet. dotnet-install.ps1 installs to
+        -- %LocalAppData%\Microsoft\dotnet, which is not scanned. Scoop, asdf and mise
         -- keep one directory per version beneath their roots.
-        add(child(userprofile, ".dotnet"), "installed by dotnet-install.ps1")
+        add(child(userprofile, ".dotnet"), "installed by dotnet-install.sh")
         add(child(userprofile, "scoop", "apps"), "installed by Scoop", 2)
         add(child(userprofile, ".asdf", "installs", "dotnet"), "installed by asdf", 1)
         add(child(userprofile, ".local", "share", "mise", "installs", "dotnet"), "installed by mise", 1)
@@ -219,7 +220,7 @@ function detect.candidate_roots()
     add(child(home, ".local", "share", "mise", "installs", "dotnet"), "installed by mise", 1)
     add(child(home, ".mise", "installs", "dotnet"), "installed by mise", 1)
     add("/opt/hostedtoolcache/dotnet", "CI runner tool cache", 2)
-    add(child(home, ".local", "share", "dotnet"), "installed by dotnet-install.sh")
+    add(child(home, ".local", "share", "dotnet"), "user data directory")
     add(dotnet_root, "pointed to by DOTNET_ROOT or DOTNET_HOME")
     return roots
 end

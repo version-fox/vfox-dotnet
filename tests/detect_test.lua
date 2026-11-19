@@ -159,6 +159,15 @@ check(found[1].version, "9.0.5", "asdf version")
 check(found[1].note, "installed by asdf", "asdf note")
 check(found[2].note, "installed by mise", "mise note")
 
+-- ~/.local/share/dotnet is scanned, but dotnet-install.sh does not default to
+-- it, so its note names only the directory.
+reset()
+add_sdk("/home/test/.local/share/dotnet", { "7.0.410" }, { "7.0.20" })
+found = plugin:Detect({})
+check(#found, 1, "user data directory SDK")
+check(found[1].version, "7.0.20", "user data directory version")
+check(found[1].note, "user data directory", "user data directory note")
+
 -- Nothing is found on a machine with no SDKs outside vfox.
 reset()
 check(#plugin:Detect({}), 0, "no SDKs")
