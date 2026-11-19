@@ -20,7 +20,7 @@ vfox 会列出插件找到的 SDK，并让你选择要纳入哪一个。`vfox li
 - `~/.dotnet`，即 `dotnet-install.sh` 的默认目录；Linux 和 macOS 上还有 `~/.local/share/dotnet`。
 - `%LocalAppData%\Microsoft\dotnet`，Windows 上 `dotnet-install.ps1` 的默认目录。
 - Homebrew：`dotnet` 和 `dotnet@<主版本>` formula 安装的 SDK，位于 `$HOMEBREW_PREFIX`、`/opt/homebrew`、`/usr/local` 或 `/home/linuxbrew/.linuxbrew` 下的 `opt/dotnet/libexec` 或 `opt/dotnet@<主版本>/libexec`。
-- Scoop（`~/scoop/apps` 下任意应用的版本目录）。
+- Windows 上的 Scoop（`~/scoop/apps` 下任意应用的版本目录）。
 - asdf 和 mise（`~/.asdf/installs/dotnet/<版本>`、`~/.local/share/mise/installs/dotnet/<版本>`、`~/.mise/installs/dotnet/<版本>`）。
 - CI 运行器的工具缓存（`/opt/hostedtoolcache/dotnet`）。
 - `DOTNET_ROOT`；未设置 `DOTNET_ROOT` 时使用 `DOTNET_HOME`。

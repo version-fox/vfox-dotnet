@@ -14,7 +14,7 @@
 | `hooks/detect.lua` | `Detect`: find SDKs already on the machine for `vfox link --detect` |
 | `lib/util.lua` | version parsing, release lookup, OS/architecture to RID mapping |
 | `lib/detect_dotnet.lua` | finding installed SDKs by their `sdk` and runtime directories |
-| `Injection.lua` | type hints for the objects vfox injects; never changed |
+| `Injection.lua` | type hints for the objects vfox injects; do not edit |
 | `tests/*_test.lua` | offline hook tests run by `vfox plugin test` |
 | `tests/fixtures/` | release metadata JSON read by the offline tests |
 | `tests/e2e/` | Ubuntu and Windows end-to-end suites, see [e2e.md](e2e.md) |

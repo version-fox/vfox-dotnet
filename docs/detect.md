@@ -23,7 +23,7 @@ where it is.
 - `~/.dotnet`, the default directory of `dotnet-install.sh`, and on Linux and macOS `~/.local/share/dotnet`.
 - `%LocalAppData%\Microsoft\dotnet` on Windows, the default directory of `dotnet-install.ps1`.
 - Homebrew: the SDK of the `dotnet` and `dotnet@<major>` formulae, in `opt/dotnet/libexec` or `opt/dotnet@<major>/libexec` under `$HOMEBREW_PREFIX`, `/opt/homebrew`, `/usr/local` or `/home/linuxbrew/.linuxbrew`.
-- Scoop (`~/scoop/apps`, any app's version directories).
+- Scoop on Windows (`~/scoop/apps`, any app's version directories).
 - asdf and mise (`~/.asdf/installs/dotnet/<version>`, `~/.local/share/mise/installs/dotnet/<version>`, `~/.mise/installs/dotnet/<version>`).
 - The CI runner tool cache (`/opt/hostedtoolcache/dotnet`).
 - `DOTNET_ROOT`, or `DOTNET_HOME` when `DOTNET_ROOT` is not set.

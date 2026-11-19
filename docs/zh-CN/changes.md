@@ -4,7 +4,7 @@
 
 记录每个版本中用户可感知的变化。拉取请求列表见 GitHub 的发布页面。
 
-## 未发布
+## 0.3.7 (2026-11-19)
 
 - `vfox link --detect dotnet` 现在会找到 `dotnet-install.ps1` 默认安装的 SDK，位于 Windows 的 `%LocalAppData%\Microsoft\dotnet`。
 - `vfox link --detect dotnet` 现在会找到 Homebrew 的 `dotnet` 和 `dotnet@<主版本>` formula 安装的 SDK，位于 Homebrew 前缀下 `opt` 目录中的 `libexec`。以前它搜索的是前缀下的 `share/dotnet`，而这些 formula 从不使用那里。
