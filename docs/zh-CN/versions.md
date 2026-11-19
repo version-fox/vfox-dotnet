@@ -11,20 +11,20 @@
 
 | 你输入 | 插件查找的内容 |
 | --- | --- |
-| `8` | 所有以 `8` 开头的通道中最新的正式版（通常只有 `8.0` 一个通道） |
-| `8.0` | `8.0` 通道中最新的正式版；没有正式版时为最新的预览版 |
-| `8.0.34` | 发布版本 `8.0.34` 及其附带的 SDK |
+| `10` | 所有以 `10` 开头的通道中最新的正式版（通常只有 `10.0` 一个通道） |
+| `10.0` | `10.0` 通道中最新的正式版；没有正式版时为最新的预览版 |
+| `10.0.15` | 发布版本 `10.0.15` 及其附带的 SDK |
 | `latest` | 所有通道中最新的正式版；没有任何正式版时为最新的预览版 |
 
 ```bash
-vfox install dotnet@8
-vfox install dotnet@8.0
-vfox install dotnet@8.0.34
+vfox install dotnet@10
+vfox install dotnet@10.0
+vfox install dotnet@10.0.15
 ```
 
-单独的主版本号会保留在主版本号级别，而不是补成 `8.0`，这样像 `9.1` 这样的通道也仍然可以被找到。单独的主版本号也可能覆盖多个通道：`2` 覆盖 2.0、2.1 和 2.2，并安装其中最新的正式版，而不是微软索引里排在最前的那个通道。
+单独的主版本号会保留在主版本号级别，而不是补成 `10.0`，这样像 `10.1` 这样的通道也仍然可以被找到。单独的主版本号也可能覆盖多个通道：`2` 覆盖 2.0、2.1 和 2.2，并安装其中最新的正式版，而不是微软索引里排在最前的那个通道。
 
-在当前平台上没有匹配发行版的版本会让 `vfox install` 失败，错误信息会给出该版本号和平台，例如 `dotnet version 8.0.999 is not available for linux-x64`，且不会安装任何内容。
+在当前平台上没有匹配发行版的版本会让 `vfox install` 失败，错误信息会给出该版本号和平台，例如 `dotnet version 10.0.999 is not available for linux-x64`，且不会安装任何内容。
 
 `vfox search dotnet` 会列出所有通道中每个可安装的变体，方括号内是发行版及其组件的版本。插件返回完整列表，
 搜索条件由 vfox 应用：
@@ -32,7 +32,7 @@ vfox install dotnet@8.0.34
 ```
 vfox search dotnet
 vfox search dotnet runtime
-vfox search dotnet 8.0
+vfox search dotnet 10.0
 ```
 
 ## 发行版变体
@@ -41,34 +41,34 @@ vfox search dotnet 8.0
 
 | 你输入 | 安装的内容 |
 | --- | --- |
-| `8.0.34` | .NET SDK（默认） |
-| `8.0.34-runtime` | 仅 .NET Runtime |
-| `8.0.34-aspnetcore` | ASP.NET Core Runtime（包含 .NET Runtime） |
+| `10.0.15` | .NET SDK（默认） |
+| `10.0.15-runtime` | 仅 .NET Runtime |
+| `10.0.15-aspnetcore` | ASP.NET Core Runtime（包含 .NET Runtime） |
 
 ```bash
-vfox install dotnet@8.0.34-runtime
-vfox install dotnet@8-runtime
-vfox install dotnet@8.0.34-aspnetcore
+vfox install dotnet@10.0.15-runtime
+vfox install dotnet@10-runtime
+vfox install dotnet@10.0.15-aspnetcore
 ```
 
-SDK 解压后约占 600 MB 磁盘空间，`-runtime` 和 `-aspnetcore` 约占 70–100 MB。下载的压缩包更小：
-SDK 约 217 MB，`-runtime` 约 31 MB，`-aspnetcore` 约 42 MB（8.0 系列、linux-x64）。只需要运行应用程序时可以使用运行时变体。
+SDK 解压后约占 600 MB 磁盘空间，`-runtime` 和 `-aspnetcore` 约占 70–100 MB（磁盘占用以 .NET 8.0 测得）。下载的压缩包更小：
+SDK 约 232 MB，`-runtime` 约 35 MB，`-aspnetcore` 约 47 MB（10.0.15、linux-x64）。只需要运行应用程序时可以使用运行时变体。
 不带后缀会保持原有行为，因此既有安装不受影响。
 
 后缀适用于任何接受版本号的地方，包括 `vfox use` 和 `.tool-versions`，也可以与部分版本号组合
-（`8-runtime`、`8.0-runtime`）。由于 `11.0.0-rc.3` 这样的预览版本本身已包含连字符，插件只把上述两个
+（`10-runtime`、`10.0-runtime`）。由于 `11.0.0-rc.3` 这样的预览版本本身已包含连字符，插件只把上述两个
 已知后缀解释为发行版；未知后缀不会匹配任何版本。
 
 ## 安装与使用
 
 ```bash
-vfox install dotnet@8.0
-vfox use --global dotnet@8.0
+vfox install dotnet@10.0
+vfox use --global dotnet@10.0
 dotnet --version
 ```
 
-`dotnet --version` 输出的是 SDK 版本（例如 `8.0.428`），`vfox current dotnet` 输出的是 vfox 选中的
-.NET 发布版本（例如 `8.0.34`）——同一个 SDK 发布版本可能带有更高的 SDK 编号。
+`dotnet --version` 输出的是 SDK 版本（例如 `10.0.404`），`vfox current dotnet` 输出的是 vfox 选中的
+.NET 发布版本（例如 `10.0.15`）——同一个 SDK 发布版本可能带有更高的 SDK 编号。
 `dotnet --list-sdks` 会列出选中版本附带的所有 SDK。
 
 `vfox use --global` 为之后所有新 shell 选中 SDK；`--project` 只作用于当前目录，`--session` 只作用于
@@ -99,7 +99,7 @@ vfox install dotnet@11.0.0-rc.3
 
 ```bash
 eval "$(vfox activate bash)"
-vfox use --global dotnet@8.0
+vfox use --global dotnet@10.0
 eval "$(vfox env -s bash)"
 dotnet --version
 ```

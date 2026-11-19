@@ -5,7 +5,7 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
-## Unreleased
+## 0.3.7 (2026-11-19)
 
 - `vfox link --detect dotnet` now finds the SDK that `dotnet-install.ps1` installs by default, in `%LocalAppData%\Microsoft\dotnet` on Windows.
 - `vfox link --detect dotnet` now finds the SDKs of Homebrew's `dotnet` and `dotnet@<major>` formulae, in `libexec` under the `opt` directory of the Homebrew prefix. Before, it searched `share/dotnet` under the prefix, which the formulae never use.

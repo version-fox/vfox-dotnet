@@ -34,7 +34,7 @@ import (
 
 // TestE2E lists the releases through mise, installs a real .NET SDK through
 // the plugin, uses it and links a synthetic system SDK. Scope the version
-// locally with DOTNET_VERSION=9.0.
+// locally with DOTNET_VERSION, which defaults to 10.0.
 func TestE2E(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skip container E2E in short mode")
@@ -143,7 +143,7 @@ func checkMiseListing(t *testing.T, ctx context.Context, ctr tc.Container, versi
 }
 
 // listsRelease reports whether listed holds a release of channel with the
-// given variant suffix: 8.0.34 for the SDK, 8.0.34-runtime for the runtime.
+// given variant suffix: 10.0.15 for the SDK, 10.0.15-runtime for the runtime.
 func listsRelease(listed []string, channel, suffix string) bool {
 	re := regexp.MustCompile(`^` + regexp.QuoteMeta(channel) + `\.\d+` + regexp.QuoteMeta(suffix) + `$`)
 	for _, version := range listed {

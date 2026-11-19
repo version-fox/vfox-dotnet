@@ -89,11 +89,11 @@ go test -v -timeout 55m -run TestE2E ./windows
 
 ## Configuration
 
-- `DOTNET_VERSION` overrides the channel under test (default `8.0`).
+- `DOTNET_VERSION` overrides the channel under test (default `10.0`, the current LTS channel).
 - `E2E_RETRY_ATTEMPTS` overrides the retry count (default `3`).
 
-`dotnet --version` prints the SDK number (`8.0.428`), which can be higher than
-the .NET release vfox selected (`8.0.34`), so the suites only compare the major
+`dotnet --version` prints the SDK number (`10.0.404`), which can be higher than
+the .NET release vfox selected (`10.0.15`), so the suites only compare the major
 and minor with `DOTNET_VERSION`.
 
 ## CI

@@ -32,7 +32,8 @@ import (
 )
 
 // TestE2E installs a real .NET SDK through the plugin, uses it and links a
-// synthetic system SDK. Scope the version locally with DOTNET_VERSION=9.0.
+// synthetic system SDK. Scope the version locally with DOTNET_VERSION, which
+// defaults to 10.0.
 func TestE2E(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skip container E2E in short mode")

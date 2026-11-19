@@ -14,7 +14,7 @@
 | `hooks/detect.lua` | `Detect`: find SDKs already on the machine for `vfox link --detect` |
 | `lib/util.lua` | version parsing, release lookup, OS/architecture to RID mapping |
 | `lib/detect_dotnet.lua` | finding installed SDKs by their `sdk` and runtime directories |
-| `Injection.lua` | type hints for the objects vfox injects; never changed |
+| `Injection.lua` | type hints for the objects vfox injects; do not edit |
 | `tests/*_test.lua` | offline hook tests run by `vfox plugin test` |
 | `tests/fixtures/` | release metadata JSON read by the offline tests |
 | `tests/e2e/` | Ubuntu and Windows end-to-end suites, see [e2e.md](e2e.md) |
@@ -40,9 +40,9 @@ the `sdk`, `runtime` and `aspnetcore-runtime` components of the release metadata
 vfox searches that list.
 
 `PreInstall` strips a known variant suffix, parses the remaining version into a
-channel (`8` → `8`, `8.0` → `8.0`, `8.0.34` → `8.0`), fetches only the channels it
+channel (`10` → `10`, `10.0` → `10.0`, `10.0.15` → `10.0`), fetches only the channels it
 names and only that variant, and resolves an exact version first, then a partial
-version on component boundaries (`8.0.3` does not match `8.0.34`), taking the
+version on component boundaries (`10.0.3` does not match `10.0.15`), taking the
 newest stable release among the matches. A bare major names every channel of that
 major: `2` fetches 2.0, 2.1 and 2.2, sorted newest first because the index lists
 2.1 before 2.2. The `addition` field carries the component version and label.

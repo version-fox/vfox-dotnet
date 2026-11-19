@@ -23,7 +23,7 @@ where it is.
 - `~/.dotnet`, the default directory of `dotnet-install.sh`, and on Linux and macOS `~/.local/share/dotnet`.
 - `%LocalAppData%\Microsoft\dotnet` on Windows, the default directory of `dotnet-install.ps1`.
 - Homebrew: the SDK of the `dotnet` and `dotnet@<major>` formulae, in `opt/dotnet/libexec` or `opt/dotnet@<major>/libexec` under `$HOMEBREW_PREFIX`, `/opt/homebrew`, `/usr/local` or `/home/linuxbrew/.linuxbrew`.
-- Scoop (`~/scoop/apps`, any app's version directories).
+- Scoop on Windows (`~/scoop/apps`, any app's version directories).
 - asdf and mise (`~/.asdf/installs/dotnet/<version>`, `~/.local/share/mise/installs/dotnet/<version>`, `~/.mise/installs/dotnet/<version>`).
 - The CI runner tool cache (`/opt/hostedtoolcache/dotnet`).
 - `DOTNET_ROOT`, or `DOTNET_HOME` when `DOTNET_ROOT` is not set.
@@ -37,8 +37,8 @@ offered, so an SDK vfox installed is not detected as a second copy.
 
 A found SDK is named after the newest runtime it carries, in the
 `shared/Microsoft.NETCore.App` directory — the .NET release version that
-`vfox install` also uses, such as `8.0.34`. When two homes carry the same
-runtime, only the first is offered, so `vfox use dotnet@8.0.34` has one target.
+`vfox install` also uses, such as `10.0.15`. When two homes carry the same
+runtime, only the first is offered, so `vfox use dotnet@10.0.15` has one target.
 Entries that are already installed or linked are skipped.
 
 ## Linking by hand
@@ -47,9 +47,9 @@ Where `--detect` does not look, point at the SDK home by hand. It is the
 directory that holds the `dotnet` executable, `sdk` and `shared`:
 
 ```
-vfox link dotnet@8.0.34 /opt/dotnet
-vfox use dotnet@8.0.34
+vfox link dotnet@10.0.15 /opt/dotnet
+vfox use dotnet@10.0.15
 ```
 
-`vfox use --force dotnet@8.0.34` is not needed unless the version is already
+`vfox use --force dotnet@10.0.15` is not needed unless the version is already
 linked to a different directory; use `vfox link --force` for that.
