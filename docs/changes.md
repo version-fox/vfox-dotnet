@@ -5,6 +5,11 @@
 What changed in each release, as a user notices it. GitHub's release pages list
 the pull requests.
 
+## Unreleased
+
+- A bare major such as `dotnet@2` now installs the newest stable release across all of its channels. Before, only the first channel of that major in Microsoft's release index was searched, so `dotnet@2` installed 2.1.30 although 2.2.8 is newer. A full channel such as `dotnet@2.1` still selects only that channel.
+- The ASP.NET Core Runtime of .NET Core 2.0 is now listed and installable on Linux, for example `dotnet@2.0.9-aspnetcore`. It failed with `not available for linux-x64` before, because Microsoft publishes it as a `dotnet-hosting` archive. It is listed for 2.0.6, 2.0.7 and 2.0.9. The archives of 2.0.3, 2.0.5 and 2.0.8 have no checksum in Microsoft's release metadata, so they are not listed, and the other 2.0 releases have no ASP.NET Core Runtime for Linux.
+
 ## 0.3.5 (2026-11-18)
 
 - An unknown version, such as `dotnet@8.0.999`, no longer reports a successful install. vfox recorded an install with no version, and `vfox list dotnet` showed `no available version`. The install now fails with an error that names the version and the platform, for example `dotnet version 8.0.999 is not available for linux-x64`. A `latest` request with no release for the platform fails with `no dotnet release is available for linux-x64`.

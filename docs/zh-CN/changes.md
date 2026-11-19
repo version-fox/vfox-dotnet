@@ -4,6 +4,11 @@
 
 记录每个版本中用户可感知的变化。拉取请求列表见 GitHub 的发布页面。
 
+## 未发布
+
+- 单独的主版本号（如 `dotnet@2`）现在会安装该主版本所有通道中最新的正式版。以前只查找微软发布索引中该主版本的第一个通道，因此 `dotnet@2` 安装的是 2.1.30，而更新的正式版 2.2.8 没有被选中。完整的通道（如 `dotnet@2.1`）仍然只选择该通道。
+- .NET Core 2.0 的 ASP.NET Core Runtime 现在可以在 Linux 上列出并安装，例如 `dotnet@2.0.9-aspnetcore`。以前它会报 `not available for linux-x64`，因为微软把它发布为 `dotnet-hosting` 压缩包。2.0.6、2.0.7 和 2.0.9 会列出该包。2.0.3、2.0.5 和 2.0.8 的压缩包在微软的发布元数据中没有校验和，因此不会列出；其他 2.0 发行版在 Linux 上没有 ASP.NET Core Runtime。
+
 ## 0.3.5 (2026-11-18)
 
 - 未知版本（如 `dotnet@8.0.999`）不再报告安装成功。以前 vfox 会记录一个没有版本号的安装，`vfox list dotnet` 显示 `no available version`。现在安装会失败，并给出包含版本号和平台的错误，例如 `dotnet version 8.0.999 is not available for linux-x64`。`latest` 在该平台没有任何发行版时，会失败并提示 `no dotnet release is available for linux-x64`。
