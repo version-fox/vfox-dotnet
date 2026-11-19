@@ -30,7 +30,7 @@ import (
 )
 
 // DefaultVersion is the .NET channel installed when DOTNET_VERSION is unset.
-const DefaultVersion = "8.0"
+const DefaultVersion = "10.0"
 
 // Version returns the channel under test, honouring $DOTNET_VERSION.
 func Version() string {
@@ -41,7 +41,7 @@ func Version() string {
 }
 
 // MajorMinor returns the leading "major.minor" of a version. The .NET release
-// vfox selects (8.0.34) may carry a newer SDK number (8.0.428), so checks
+// vfox selects (10.0.15) may carry a newer SDK number (10.0.404), so checks
 // compare only these two components.
 func MajorMinor(version string) string {
 	parts := strings.SplitN(version, ".", 3)
@@ -100,7 +100,7 @@ func StripANSI(s string) string {
 }
 
 // InstalledVersion extracts the version vfox recorded from `vfox install`
-// output, e.g. 8.0.34 for `Install dotnet@8.0.34 success!`.
+// output, e.g. 10.0.15 for `Install dotnet@10.0.15 success!`.
 func InstalledVersion(output string) string {
 	re := regexp.MustCompile(`Install dotnet@(\S+) success!`)
 	if m := re.FindStringSubmatch(StripANSI(output)); m != nil {
