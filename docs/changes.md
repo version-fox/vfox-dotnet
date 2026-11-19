@@ -7,6 +7,12 @@ the pull requests.
 
 ## Unreleased
 
+- `vfox link --detect dotnet` now finds the SDK that `dotnet-install.ps1` installs by default, in `%LocalAppData%\Microsoft\dotnet` on Windows.
+- `vfox link --detect dotnet` now finds the SDKs of Homebrew's `dotnet` and `dotnet@<major>` formulae, in `libexec` under the `opt` directory of the Homebrew prefix. Before, it searched `share/dotnet` under the prefix, which the formulae never use.
+- The source note that `vfox link --detect` shows for `~/.dotnet` now names `dotnet-install.sh` on Windows too. `~/.local/share/dotnet` is noted as a user data directory, since neither install script installs there by default.
+
+## 0.3.6 (2026-11-19)
+
 - A bare major such as `dotnet@2` now installs the newest stable release across all of its channels. Before, only the first channel of that major in Microsoft's release index was searched, so `dotnet@2` installed 2.1.30 although 2.2.8 is newer. A full channel such as `dotnet@2.1` still selects only that channel.
 - The ASP.NET Core Runtime of .NET Core 2.0 is now listed and installable on Linux, for example `dotnet@2.0.9-aspnetcore`. It failed with `not available for linux-x64` before, because Microsoft publishes it as a `dotnet-hosting` archive. It is listed for 2.0.6, 2.0.7 and 2.0.9. The archives of 2.0.3, 2.0.5 and 2.0.8 have no checksum in Microsoft's release metadata, so they are not listed, and the other 2.0 releases have no ASP.NET Core Runtime for Linux.
 

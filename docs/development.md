@@ -65,8 +65,9 @@ names its URL, so no channel is left out silently. A component that is JSON
 ## Detecting installed SDKs
 
 `hooks/detect.lua` implements `Detect` for `vfox link --detect dotnet`.
-`lib/detect_dotnet.lua` scans the system directories, `~/.dotnet`, Homebrew,
-Scoop, asdf, mise, the CI tool cache and `DOTNET_ROOT`/`DOTNET_HOME`. A directory
+`lib/detect_dotnet.lua` scans the system directories, `~/.dotnet`,
+`%LocalAppData%\Microsoft\dotnet` on Windows, Homebrew, Scoop, asdf, mise, the CI
+tool cache and `DOTNET_ROOT`/`DOTNET_HOME`. A directory
 is an SDK home when it has the `dotnet` executable and at least one version under
 `sdk/`; it is named after the newest runtime under
 `shared/Microsoft.NETCore.App` (or `host/fxr`), which is the release version
@@ -145,5 +146,6 @@ a `*_test.lua` file; use an E2E suite instead.
 
 See [Releasing this plugin](../README.md#releasing-this-plugin). Pull requests
 only run checks; publication is a manual `workflow_dispatch` with a stable
-version. Add a dated section to [changes.md](changes.md) and its Chinese copy
-when publishing.
+version. A fix pull request adds its entries under `## Unreleased` in
+[changes.md](changes.md) and its Chinese copy. The documentation pull request
+after a release renames that heading to the version and date.

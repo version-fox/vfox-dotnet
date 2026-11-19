@@ -51,7 +51,8 @@ vfox install dotnet@8-runtime
 vfox install dotnet@8.0.34-aspnetcore
 ```
 
-SDK 压缩包大约 600 MB，而仅运行时的压缩包约为 70–100 MB。只需要运行应用程序时可以使用运行时变体。
+SDK 解压后约占 600 MB 磁盘空间，`-runtime` 和 `-aspnetcore` 约占 70–100 MB。下载的压缩包更小：
+SDK 约 217 MB，`-runtime` 约 31 MB，`-aspnetcore` 约 42 MB（8.0 系列、linux-x64）。只需要运行应用程序时可以使用运行时变体。
 不带后缀会保持原有行为，因此既有安装不受影响。
 
 后缀适用于任何接受版本号的地方，包括 `vfox use` 和 `.tool-versions`，也可以与部分版本号组合

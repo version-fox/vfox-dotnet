@@ -53,7 +53,7 @@ RID 映射位于 `lib/util.lua:getOsTypeAndArch`。增加平台时，请同时�
 ## 检测已安装的 SDK
 
 `hooks/detect.lua` 为 `vfox link --detect dotnet` 实现 `Detect`。
-`lib/detect_dotnet.lua` 会扫描系统目录、`~/.dotnet`、Homebrew、Scoop、asdf、mise、CI 工具缓存以及
+`lib/detect_dotnet.lua` 会扫描系统目录、`~/.dotnet`、Windows 上的 `%LocalAppData%\Microsoft\dotnet`、Homebrew、Scoop、asdf、mise、CI 工具缓存以及
 `DOTNET_ROOT`/`DOTNET_HOME`。如果一个目录包含 `dotnet` 可执行文件且 `sdk/` 下至少有一个版本，就视为 SDK 主目录；
 它按 `shared/Microsoft.NETCore.App`（或 `host/fxr`）下的最新运行时命名，也就是 `vfox install` 使用的发布版本。
 `.vfox` 或 `$VFOX_HOME` 下的路径、重复版本以及只有运行时的目录都会被排除。结果按版本从新到旧排序。
@@ -123,4 +123,4 @@ local util = require("util")
 ## 发布
 
 参见[发布插件](../../README_CN.md#发布插件)。拉取请求只运行检查；发布通过 `workflow_dispatch` 手动
-指定稳定版本。发布时，请在中英文两份更新日志中添加带日期的章节：[changes.md](changes.md) 和 [英文版](../changes.md)。
+指定稳定版本。修复类拉取请求会在中英文两份更新日志（[changes.md](changes.md) 和 [英文版](../changes.md)）的“未发布”一节中添加条目；发布之后的文档拉取请求会把该标题改为版本号和日期。
