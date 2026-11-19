@@ -149,4 +149,6 @@ plus `libssl3` and `zlib1g` before running `dotnet` for the first time.
 
 The release metadata publishes a SHA-512 `hash` for each binaries file. The
 plugin passes it to vfox, which verifies the download before unpacking it. A
-download that does not match is rejected and nothing is installed.
+download that does not match is rejected and nothing is installed. A binaries
+file that Microsoft publishes without a SHA-512 is not listed, because vfox would
+install it without checking it.

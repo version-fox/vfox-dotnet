@@ -29,10 +29,12 @@
 then every channel's `releases.json`. For each release and each distribution
 variant it picks the *Binaries* file whose RID matches the current platform,
 whose name starts with the variant's package name (`dotnet-sdk-`,
-`dotnet-runtime-` or `aspnetcore-runtime-`) and whose URL ends in `.tar.gz` or
-`.zip`, and records the published SHA-512 as `sha512`. The name is what selects
-the file: the `runtime` component of .NET 10 and later also lists the apphost
-pack, before the runtime. Installers and composite ASP.NET archives are ignored.
+`dotnet-runtime-`, `aspnetcore-runtime-` or, for the ASP.NET Core Runtime of
+.NET Core 2.0, `dotnet-hosting-`) and whose URL ends in `.tar.gz` or `.zip`, and
+records the published SHA-512 as `sha512`. The name is what selects the file:
+the `runtime` component of .NET 10 and later also lists the apphost pack, before
+the runtime. Installers and composite ASP.NET archives are ignored, and so is an
+archive without a published SHA-512, because vfox would install it unchecked.
 The variants are the SDK (no suffix), `-runtime` and `-aspnetcore`, built from
 the `sdk`, `runtime` and `aspnetcore-runtime` components of the release metadata.
 vfox searches that list.
@@ -58,7 +60,7 @@ Within one vfox process each release metadata document is fetched once, and the
 OS and architecture are read once, because neither changes while it runs. If a
 document cannot be fetched or decoded, the whole listing fails with an error that
 names its URL, so no channel is left out silently. A component that is JSON
-`null`, such as the ASP.NET Core Runtime of the 1.0 to 2.0 channels, is skipped.
+`null`, such as the ASP.NET Core Runtime of 2.0.4 or of most 1.0 releases, is skipped.
 
 ## Detecting installed SDKs
 

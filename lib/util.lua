@@ -34,20 +34,22 @@ util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL .. "/releases-index.jso
         8.0.8-aspnetcore  -> ASP.NET Core Runtime (includes the .NET Runtime)
 
     `field` is the key holding the component inside a release entry of the
-    official releases.json metadata. `archive` is the start of the file name of
-    the variant's archive inside that component. A component can list other
-    packages too (the runtime component of .NET 10 and later lists the apphost
-    pack first), so the name decides which archive is taken, not the position.
+    official releases.json metadata. `archives` lists the starts of the file names
+    the variant's archive can have inside that component, most preferred first. A
+    component can list other packages too (the runtime component of .NET 10 and
+    later lists the apphost pack first), so the name decides which archive is taken,
+    not the position. The ASP.NET Core Runtime of .NET Core 2.0 is named
+    dotnet-hosting-<version> instead of aspnetcore-runtime-<version>.
 ]]
 local VARIANTS = {
-    { key = "sdk", suffix = "", label = "SDK", field = "sdk", archive = "dotnet-sdk-" },
-    { key = "runtime", suffix = "-runtime", label = "Runtime", field = "runtime", archive = "dotnet-runtime-" },
+    { key = "sdk", suffix = "", label = "SDK", field = "sdk", archives = { "dotnet-sdk-" } },
+    { key = "runtime", suffix = "-runtime", label = "Runtime", field = "runtime", archives = { "dotnet-runtime-" } },
     {
         key = "aspnetcore",
         suffix = "-aspnetcore",
         label = "ASP.NET Core Runtime",
         field = "aspnetcore-runtime",
-        archive = "aspnetcore-runtime-",
+        archives = { "aspnetcore-runtime-", "dotnet-hosting-" },
     },
 }
 local DEFAULT_VARIANT = VARIANTS[1]
@@ -194,25 +196,31 @@ local function fileName(url)
 end
 
 --- Pick the binary archive of a variant for the current platform out of a
---- component's files. The archive's name must start with the variant's prefix,
---- so a package listed before it (such as the apphost pack) is never taken.
---- Installers (.pkg/.exe) and the composite ASP.NET archives are skipped.
+--- component's files. The archive's name must start with one of the variant's
+--- prefixes, the most preferred first, so a package listed before it (such as the
+--- apphost pack) is never taken. Installers (.pkg/.exe) and the composite ASP.NET
+--- archives are skipped. So is an archive without a published SHA-512: vfox would
+--- install it without checking it.
 --- @param files table|nil list of file descriptors from releases.json
 --- @param rid string target runtime identifier, e.g. "linux-x64"
---- @param archive string file name prefix of the variant, e.g. "dotnet-runtime-"
+--- @param archives table file name prefixes of the variant, e.g. {"dotnet-runtime-"}
 --- @return table|nil
-local function findAsset(files, rid, archive)
+local function findAsset(files, rid, archives)
     if type(files) ~= "table" then
         return nil
     end
-    for _, file in ipairs(files) do
-        if
-            file.rid == rid
-            and strings.has_prefix(fileName(file.url), archive)
-            and (strings.has_suffix(file.url, ".tar.gz") or strings.has_suffix(file.url, ".zip"))
-            and not string.find(file.url, "-composite-", 1, true)
-        then
-            return file
+    for _, archive in ipairs(archives) do
+        for _, file in ipairs(files) do
+            if
+                file.rid == rid
+                and strings.has_prefix(fileName(file.url), archive)
+                and (strings.has_suffix(file.url, ".tar.gz") or strings.has_suffix(file.url, ".zip"))
+                and not string.find(file.url, "-composite-", 1, true)
+                and type(file.hash) == "string"
+                and file.hash ~= ""
+            then
+                return file
+            end
         end
     end
     return nil
@@ -224,7 +232,7 @@ local function buildVersionInfo(release, variant, sysInfo, isLts)
     if type(component) ~= "table" then
         return nil
     end
-    local asset = findAsset(component.files, sysInfo.rid, variant.archive)
+    local asset = findAsset(component.files, sysInfo.rid, variant.archives)
     if not asset then
         return nil
     end
