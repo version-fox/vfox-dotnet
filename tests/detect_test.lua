@@ -16,7 +16,7 @@ local test = require("vfox.test")
 local plugin = test.load({
     os = "linux",
     arch = "amd64",
-    env = { HOME = "/home/test", DOTNET_ROOT = "/custom/dotnet" },
+    env = { HOME = "/home/test", DOTNET_ROOT = "/custom/dotnet", HOMEBREW_PREFIX = "/home/test/homebrew" },
 })
 local detect = require("detect_dotnet")
 
@@ -167,6 +167,27 @@ found = plugin:Detect({})
 check(#found, 1, "user data directory SDK")
 check(found[1].version, "7.0.20", "user data directory version")
 check(found[1].note, "user data directory", "user data directory note")
+
+-- Homebrew's dotnet formulae unpack the SDK into libexec under their opt link,
+-- one link per formula. HOMEBREW_PREFIX is searched as well as the defaults,
+-- and other formulae are ignored.
+reset()
+add_child("/opt/homebrew/opt", "dotnet")
+add_child("/opt/homebrew/opt", "dotnet@8")
+add_child("/opt/homebrew/opt", "openssl@3")
+add_child("/home/test/homebrew/opt", "dotnet")
+add_sdk("/opt/homebrew/opt/dotnet/libexec", { "11.0.100" }, { "11.0.0" })
+add_sdk("/opt/homebrew/opt/dotnet@8/libexec", { "8.0.428" }, { "8.0.34" })
+add_sdk("/home/test/homebrew/opt/dotnet/libexec", { "7.0.410" }, { "7.0.20" })
+found = plugin:Detect({})
+check(#found, 3, "Homebrew formulae")
+check(found[1].version, "11.0.0", "newest Homebrew SDK first")
+check(found[1].path, "/opt/homebrew/opt/dotnet/libexec", "dotnet formula path")
+check(found[1].note, "installed by Homebrew", "dotnet formula note")
+check(found[2].version, "8.0.34", "dotnet@8 version")
+check(found[2].path, "/opt/homebrew/opt/dotnet@8/libexec", "dotnet@8 formula path")
+check(found[3].version, "7.0.20", "HOMEBREW_PREFIX version")
+check(found[3].path, "/home/test/homebrew/opt/dotnet/libexec", "HOMEBREW_PREFIX path")
 
 -- Nothing is found on a machine with no SDKs outside vfox.
 reset()

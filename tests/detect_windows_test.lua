@@ -18,6 +18,7 @@ local plugin = test.load({
     arch = "amd64",
     env = {
         USERPROFILE = "C:\\Users\\test",
+        LOCALAPPDATA = "C:\\Users\\test\\AppData\\Local",
         ProgramFiles = "C:\\Program Files",
     },
 })
@@ -78,23 +79,28 @@ local function add_sdk(home, runtime)
     end
 end
 
--- A system install, the dotnet-install.sh home and a Scoop app are all found;
--- Scoop keeps builds two levels down. Each carries a different version so
--- none is dropped as a duplicate.
+-- A system install, the dotnet-install.sh home, the dotnet-install.ps1 home
+-- and a Scoop app are all found; Scoop keeps builds two levels down. Each
+-- carries a different version so none is dropped as a duplicate.
 add_sdk("C:\\Program Files\\dotnet", "8.0.34")
 add_sdk("C:\\Users\\test\\.dotnet", "6.0.36")
+add_sdk("C:\\Users\\test\\AppData\\Local\\Microsoft\\dotnet", "7.0.20")
 add_sdk("C:\\Users\\test\\scoop\\apps\\dotnet-sdk\\current", "9.0.5")
 add_child("C:/Users/test/scoop/apps", "dotnet-sdk")
 
 local found = plugin:Detect({})
-assert(#found == 3, "expected 3 SDKs, got " .. #found)
+assert(#found == 4, "expected 4 SDKs, got " .. #found)
 local by_note = {}
 for _, item in ipairs(found) do
     by_note[item.note] = item
 end
 assert(by_note["system SDK"].path == "C:\\Program Files\\dotnet", "system SDK path")
 assert(by_note["installed by dotnet-install.sh"].path == "C:\\Users\\test\\.dotnet", "dotnet-install.sh home")
+assert(
+    by_note["installed by dotnet-install.ps1"].path == "C:\\Users\\test\\AppData\\Local\\Microsoft\\dotnet",
+    "dotnet-install.ps1 home"
+)
 assert(by_note["installed by Scoop"].path == "C:\\Users\\test\\scoop\\apps\\dotnet-sdk\\current", "Scoop app")
 assert(found[1].version == "9.0.5", "newest SDK first")
 
-print("PASS: 3 Windows detection cases")
+print("PASS: 4 Windows detection cases")
