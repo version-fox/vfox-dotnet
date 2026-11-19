@@ -14,7 +14,7 @@ the lookup:
 
 | You write | What the plugin looks for |
 | --- | --- |
-| `8` | the newest stable release of every channel whose version starts with `8` (usually only `8.0`) |
+| `8` | the newest stable release across every channel whose version starts with `8` (usually only `8.0`) |
 | `8.0` | channel `8.0`; its newest stable release, or its newest preview when it has none |
 | `8.0.34` | release `8.0.34`; the SDK that ships with it |
 | `latest` | the newest stable release in any channel, or the newest preview when no release is stable |
@@ -59,9 +59,11 @@ vfox install dotnet@8-runtime
 vfox install dotnet@8.0.34-aspnetcore
 ```
 
-The SDK archive is roughly 600 MB while the runtime-only archives are around
-70–100 MB. Use the runtime variants when you only need to run applications. No
-suffix keeps the historical behavior, so existing installations are unchanged.
+An SDK takes roughly 600 MB on disk, and the `-runtime` and `-aspnetcore`
+distributions take 70–100 MB. The downloads are smaller: about 217 MB for the
+SDK, and 31 MB and 42 MB for `-runtime` and `-aspnetcore` (8.0 on linux-x64).
+Use the runtime variants when you only need to run applications. No suffix keeps
+the historical behavior, so existing installations are unchanged.
 
 The suffix works everywhere a version is accepted, including `vfox use` and
 `.tool-versions`, and can be combined with a partial version (`8-runtime`,

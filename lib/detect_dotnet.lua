@@ -193,9 +193,15 @@ function detect.candidate_roots()
         if programfiles_x86 and programfiles_x86 ~= "" then
             add(child(programfiles_x86, "dotnet"), "system SDK")
         end
-        -- dotnet-install.ps1 defaults to ~/.dotnet; Scoop, asdf and mise
-        -- keep one directory per version beneath their roots.
-        add(child(userprofile, ".dotnet"), "installed by dotnet-install.ps1")
+        -- dotnet-install.ps1 installs to %LocalAppData%\Microsoft\dotnet by default.
+        local localappdata = os.getenv("LOCALAPPDATA")
+        if not localappdata or localappdata == "" then
+            localappdata = child(userprofile, "AppData", "Local")
+        end
+        add(child(localappdata, "Microsoft", "dotnet"), "installed by dotnet-install.ps1")
+        -- dotnet-install.sh defaults to ~/.dotnet. Scoop, asdf and mise keep one
+        -- directory per version beneath their roots.
+        add(child(userprofile, ".dotnet"), "installed by dotnet-install.sh")
         add(child(userprofile, "scoop", "apps"), "installed by Scoop", 2)
         add(child(userprofile, ".asdf", "installs", "dotnet"), "installed by asdf", 1)
         add(child(userprofile, ".local", "share", "mise", "installs", "dotnet"), "installed by mise", 1)
@@ -203,23 +209,36 @@ function detect.candidate_roots()
         return roots
     end
 
+    -- /usr/local/share/dotnet holds Microsoft's package, which the dotnet-sdk cask
+    -- installs too, so it is a system SDK whoever installed it.
     add("/usr/share/dotnet", "system SDK")
     add("/usr/lib/dotnet", "system SDK")
     add("/usr/local/share/dotnet", "system SDK")
     add("/usr/local/dotnet", "system SDK")
     add("/opt/dotnet", "system SDK")
     add("/opt/microsoft/dotnet", "system SDK")
-    -- dotnet-install.sh defaults to ~/.dotnet; the Homebrew cask installs
-    -- under the Homebrew share directory.
+    -- dotnet-install.sh defaults to ~/.dotnet.
     add(child(home, ".dotnet"), "installed by dotnet-install.sh")
-    add("/opt/homebrew/share/dotnet", "installed by Homebrew")
-    add("/usr/local/share/dotnet", "installed by Homebrew")
-    add("/home/linuxbrew/.linuxbrew/share/dotnet", "installed by Homebrew")
+    -- The dotnet formula and the versioned dotnet@<major> formulae unpack the SDK
+    -- into libexec under their opt link, which their caveats name as DOTNET_ROOT.
+    local brew_prefixes = { "/opt/homebrew", "/usr/local", "/home/linuxbrew/.linuxbrew" }
+    local brew_env = os.getenv("HOMEBREW_PREFIX")
+    if brew_env and brew_env ~= "" then
+        table.insert(brew_prefixes, 1, brew_env)
+    end
+    for _, prefix in ipairs(brew_prefixes) do
+        for _, formula in ipairs(detect.list_children(child(prefix, "opt"))) do
+            local name = formula:match("([^/]+)$") or ""
+            if name:match("^dotnet") then
+                add(child(formula, "libexec"), "installed by Homebrew")
+            end
+        end
+    end
     add(child(home, ".asdf", "installs", "dotnet"), "installed by asdf", 1)
     add(child(home, ".local", "share", "mise", "installs", "dotnet"), "installed by mise", 1)
     add(child(home, ".mise", "installs", "dotnet"), "installed by mise", 1)
     add("/opt/hostedtoolcache/dotnet", "CI runner tool cache", 2)
-    add(child(home, ".local", "share", "dotnet"), "installed by dotnet-install.sh")
+    add(child(home, ".local", "share", "dotnet"), "user data directory")
     add(dotnet_root, "pointed to by DOTNET_ROOT or DOTNET_HOME")
     return roots
 end

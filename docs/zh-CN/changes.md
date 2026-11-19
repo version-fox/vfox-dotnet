@@ -6,6 +6,12 @@
 
 ## 未发布
 
+- `vfox link --detect dotnet` 现在会找到 `dotnet-install.ps1` 默认安装的 SDK，位于 Windows 的 `%LocalAppData%\Microsoft\dotnet`。
+- `vfox link --detect dotnet` 现在会找到 Homebrew 的 `dotnet` 和 `dotnet@<主版本>` formula 安装的 SDK，位于 Homebrew 前缀下 `opt` 目录中的 `libexec`。以前它搜索的是前缀下的 `share/dotnet`，而这些 formula 从不使用那里。
+- `vfox link --detect` 显示的 `~/.dotnet` 来源在 Windows 上也标为 `dotnet-install.sh`。`~/.local/share/dotnet` 标为用户数据目录，因为两个安装脚本默认都不安装到那里。
+
+## 0.3.6 (2026-11-19)
+
 - 单独的主版本号（如 `dotnet@2`）现在会安装该主版本所有通道中最新的正式版。以前只查找微软发布索引中该主版本的第一个通道，因此 `dotnet@2` 安装的是 2.1.30，而更新的正式版 2.2.8 没有被选中。完整的通道（如 `dotnet@2.1`）仍然只选择该通道。
 - .NET Core 2.0 的 ASP.NET Core Runtime 现在可以在 Linux 上列出并安装，例如 `dotnet@2.0.9-aspnetcore`。以前它会报 `not available for linux-x64`，因为微软把它发布为 `dotnet-hosting` 压缩包。2.0.6、2.0.7 和 2.0.9 会列出该包。2.0.3、2.0.5 和 2.0.8 的压缩包在微软的发布元数据中没有校验和，因此不会列出；其他 2.0 发行版在 Linux 上没有 ASP.NET Core Runtime。
 

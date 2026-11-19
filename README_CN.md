@@ -42,7 +42,7 @@ vfox install dotnet@8.0.34-runtime      # 仅 .NET Runtime
 vfox install dotnet@8.0.34-aspnetcore   # ASP.NET Core Runtime（包含 .NET Runtime）
 ```
 
-| 后缀 | 发行版 | 大致体积 |
+| 后缀 | 发行版 | 大致磁盘占用 |
 | --- | --- | --- |
 | *（无）* | .NET SDK（默认） | 约 600 MB |
 | `-runtime` | 仅 .NET Runtime | 约 70 MB |

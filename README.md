@@ -46,7 +46,7 @@ vfox install dotnet@8.0.34-runtime      # .NET Runtime only
 vfox install dotnet@8.0.34-aspnetcore   # ASP.NET Core Runtime (includes .NET Runtime)
 ```
 
-| Suffix | Distribution | Approx. size |
+| Suffix | Distribution | Approx. size on disk |
 | --- | --- | --- |
 | *(none)* | .NET SDK (default) | ~600 MB |
 | `-runtime` | .NET Runtime only | ~70 MB |
