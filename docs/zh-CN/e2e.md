@@ -72,11 +72,11 @@ go test -v -timeout 55m -run TestE2E ./windows
 
 ## 配置
 
-- `DOTNET_VERSION` 覆盖被测试的通道（默认 `8.0`）。
+- `DOTNET_VERSION` 覆盖被测试的通道（默认 `10.0`，即当前的 LTS 通道）。
 - `E2E_RETRY_ATTEMPTS` 覆盖重试次数（默认 `3`）。
 
-`dotnet --version` 输出的是 SDK 编号（`8.0.428`），它可能高于 vfox 选中的 .NET 发布版本
-（`8.0.34`），因此套件只比较主版本号和次版本号与 `DOTNET_VERSION` 是否一致。
+`dotnet --version` 输出的是 SDK 编号（`10.0.404`），它可能高于 vfox 选中的 .NET 发布版本
+（`10.0.15`），因此套件只比较主版本号和次版本号与 `DOTNET_VERSION` 是否一致。
 
 ## CI
 

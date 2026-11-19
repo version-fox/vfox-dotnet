@@ -37,8 +37,8 @@ offered, so an SDK vfox installed is not detected as a second copy.
 
 A found SDK is named after the newest runtime it carries, in the
 `shared/Microsoft.NETCore.App` directory — the .NET release version that
-`vfox install` also uses, such as `8.0.34`. When two homes carry the same
-runtime, only the first is offered, so `vfox use dotnet@8.0.34` has one target.
+`vfox install` also uses, such as `10.0.15`. When two homes carry the same
+runtime, only the first is offered, so `vfox use dotnet@10.0.15` has one target.
 Entries that are already installed or linked are skipped.
 
 ## Linking by hand
@@ -47,9 +47,9 @@ Where `--detect` does not look, point at the SDK home by hand. It is the
 directory that holds the `dotnet` executable, `sdk` and `shared`:
 
 ```
-vfox link dotnet@8.0.34 /opt/dotnet
-vfox use dotnet@8.0.34
+vfox link dotnet@10.0.15 /opt/dotnet
+vfox use dotnet@10.0.15
 ```
 
-`vfox use --force dotnet@8.0.34` is not needed unless the version is already
+`vfox use --force dotnet@10.0.15` is not needed unless the version is already
 linked to a different directory; use `vfox link --force` for that.

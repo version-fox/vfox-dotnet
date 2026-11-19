@@ -12,8 +12,8 @@
 
 ```
 vfox add dotnet
-vfox install dotnet@8.0
-vfox use --global dotnet@8.0
+vfox install dotnet@10.0
+vfox use --global dotnet@10.0
 dotnet --version
 ```
 
@@ -25,12 +25,12 @@ dotnet --version
 版本号可以是 .NET 通道，也可以是完整的发布版本：
 
 ```
-vfox install dotnet@8        # 8.x 系列中最新的正式版
-vfox install dotnet@8.0      # 8.0 通道中最新的正式版
-vfox install dotnet@8.0.34   # 指定的 .NET 发布版本，安装 SDK
+vfox install dotnet@10       # 10.x 系列中最新的正式版
+vfox install dotnet@10.0     # 10.0 通道中最新的正式版
+vfox install dotnet@10.0.15  # 指定的 .NET 发布版本，安装 SDK
 ```
 
-`vfox search dotnet 8.0` 会列出插件已知的版本。版本如何解析、预览版本以及插件设置的环境变量，
+`vfox search dotnet 10.0` 会列出插件已知的版本。版本如何解析、预览版本以及插件设置的环境变量，
 参见[版本与名称](docs/zh-CN/versions.md)。
 
 ## 发行版变体
@@ -38,8 +38,8 @@ vfox install dotnet@8.0.34   # 指定的 .NET 发布版本，安装 SDK
 版本号可以带后缀，以安装比完整 SDK 更小的发行版：
 
 ```
-vfox install dotnet@8.0.34-runtime      # 仅 .NET Runtime
-vfox install dotnet@8.0.34-aspnetcore   # ASP.NET Core Runtime（包含 .NET Runtime）
+vfox install dotnet@10.0.15-runtime     # 仅 .NET Runtime
+vfox install dotnet@10.0.15-aspnetcore  # ASP.NET Core Runtime（包含 .NET Runtime）
 ```
 
 | 后缀 | 发行版 | 大致磁盘占用 |

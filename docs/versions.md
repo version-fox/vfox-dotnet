@@ -14,23 +14,23 @@ the lookup:
 
 | You write | What the plugin looks for |
 | --- | --- |
-| `8` | the newest stable release across every channel whose version starts with `8` (usually only `8.0`) |
-| `8.0` | channel `8.0`; its newest stable release, or its newest preview when it has none |
-| `8.0.34` | release `8.0.34`; the SDK that ships with it |
+| `10` | the newest stable release across every channel whose version starts with `10` (usually only `10.0`) |
+| `10.0` | channel `10.0`; its newest stable release, or its newest preview when it has none |
+| `10.0.15` | release `10.0.15`; the SDK that ships with it |
 | `latest` | the newest stable release in any channel, or the newest preview when no release is stable |
 
 ```bash
-vfox install dotnet@8
-vfox install dotnet@8.0
-vfox install dotnet@8.0.34
+vfox install dotnet@10
+vfox install dotnet@10.0
+vfox install dotnet@10.0.15
 ```
 
-A bare major is deliberately kept at the major, not turned into `8.0`, so a
-channel such as `9.1` can still be found. A bare major can also cover several
+A bare major is deliberately kept at the major, not turned into `10.0`, so a
+channel such as `10.1` can still be found. A bare major can also cover several
 channels: `2` covers 2.0, 2.1 and 2.2, and installs the newest stable release among
 them, not the first channel that Microsoft's index lists.
 
-A version that matches no release for your platform fails `vfox install` with an error that names it, such as `dotnet version 8.0.999 is not available for linux-x64`. Nothing is installed in that case.
+A version that matches no release for your platform fails `vfox install` with an error that names it, such as `dotnet version 10.0.999 is not available for linux-x64`. Nothing is installed in that case.
 
 `vfox search dotnet` lists every installable variant of every release, with the
 distribution and the version of its component in brackets. The plugin returns the
@@ -39,7 +39,7 @@ whole list; vfox applies the search query:
 ```
 vfox search dotnet
 vfox search dotnet runtime
-vfox search dotnet 8.0
+vfox search dotnet 10.0
 ```
 
 ## Distribution variants
@@ -49,39 +49,40 @@ full SDK:
 
 | You write | What gets installed |
 | --- | --- |
-| `8.0.34` | .NET SDK (default) |
-| `8.0.34-runtime` | .NET Runtime only |
-| `8.0.34-aspnetcore` | ASP.NET Core Runtime, which includes the .NET Runtime |
+| `10.0.15` | .NET SDK (default) |
+| `10.0.15-runtime` | .NET Runtime only |
+| `10.0.15-aspnetcore` | ASP.NET Core Runtime, which includes the .NET Runtime |
 
 ```bash
-vfox install dotnet@8.0.34-runtime
-vfox install dotnet@8-runtime
-vfox install dotnet@8.0.34-aspnetcore
+vfox install dotnet@10.0.15-runtime
+vfox install dotnet@10-runtime
+vfox install dotnet@10.0.15-aspnetcore
 ```
 
 An SDK takes roughly 600 MB on disk, and the `-runtime` and `-aspnetcore`
-distributions take 70–100 MB. The downloads are smaller: about 217 MB for the
-SDK, and 31 MB and 42 MB for `-runtime` and `-aspnetcore` (8.0 on linux-x64).
+distributions take 70–100 MB; these on-disk sizes were measured on .NET 8.0. The
+downloads are smaller: about 232 MB for the SDK, and 35 MB and 47 MB for
+`-runtime` and `-aspnetcore` (10.0.15 on linux-x64).
 Use the runtime variants when you only need to run applications. No suffix keeps
 the historical behavior, so existing installations are unchanged.
 
 The suffix works everywhere a version is accepted, including `vfox use` and
-`.tool-versions`, and can be combined with a partial version (`8-runtime`,
-`8.0-runtime`). Since preview versions such as `11.0.0-rc.3` already contain
+`.tool-versions`, and can be combined with a partial version (`10-runtime`,
+`10.0-runtime`). Since preview versions such as `11.0.0-rc.3` already contain
 hyphens, only the two known suffixes are interpreted as a distribution; an
 unknown suffix does not match any release.
 
 ## Install and use
 
 ```bash
-vfox install dotnet@8.0
-vfox use --global dotnet@8.0
+vfox install dotnet@10.0
+vfox use --global dotnet@10.0
 dotnet --version
 ```
 
-`dotnet --version` prints the SDK version (for example `8.0.428`), while
+`dotnet --version` prints the SDK version (for example `10.0.404`), while
 `vfox current dotnet` prints the .NET release vfox selected (for example
-`8.0.34`) — one SDK release can carry a newer SDK number. `dotnet --list-sdks`
+`10.0.15`) — one SDK release can carry a newer SDK number. `dotnet --list-sdks`
 lists every SDK installed by the selected release.
 
 `vfox use --global` selects the SDK for every new shell. `--project` selects it
@@ -117,7 +118,7 @@ shell. In a script, activate vfox first:
 
 ```bash
 eval "$(vfox activate bash)"
-vfox use --global dotnet@8.0
+vfox use --global dotnet@10.0
 eval "$(vfox env -s bash)"
 dotnet --version
 ```

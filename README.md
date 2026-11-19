@@ -14,8 +14,8 @@ install an SDK:
 
 ```
 vfox add dotnet
-vfox install dotnet@8.0
-vfox use --global dotnet@8.0
+vfox install dotnet@10.0
+vfox use --global dotnet@10.0
 dotnet --version
 ```
 
@@ -27,12 +27,12 @@ For `dotnet` to be on your `PATH`, hook vfox into your shell; see the
 A version is a .NET channel or a full release version:
 
 ```
-vfox install dotnet@8        # newest stable release in the 8.x line
-vfox install dotnet@8.0      # newest stable release in the 8.0 channel
-vfox install dotnet@8.0.34   # a specific .NET release, installed as the SDK
+vfox install dotnet@10       # newest stable release in the 10.x line
+vfox install dotnet@10.0     # newest stable release in the 10.0 channel
+vfox install dotnet@10.0.15  # a specific .NET release, installed as the SDK
 ```
 
-`vfox search dotnet 8.0` lists the releases the plugin knows about. See
+`vfox search dotnet 10.0` lists the releases the plugin knows about. See
 [versions and names](docs/versions.md) for how a version is resolved, preview
 builds and the environment the plugin sets.
 
@@ -42,8 +42,8 @@ A version can carry a suffix to install a smaller distribution instead of the
 full SDK:
 
 ```
-vfox install dotnet@8.0.34-runtime      # .NET Runtime only
-vfox install dotnet@8.0.34-aspnetcore   # ASP.NET Core Runtime (includes .NET Runtime)
+vfox install dotnet@10.0.15-runtime     # .NET Runtime only
+vfox install dotnet@10.0.15-aspnetcore  # ASP.NET Core Runtime (includes .NET Runtime)
 ```
 
 | Suffix | Distribution | Approx. size on disk |

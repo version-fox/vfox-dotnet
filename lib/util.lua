@@ -21,7 +21,7 @@ local util = {}
 util.BARE_URL = "https://dotnet.microsoft.com"
 
 -- @example https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json
--- @example https://builds.dotnet.microsoft.com/dotnet/release-metadata/9.0/releases.json
+-- @example https://builds.dotnet.microsoft.com/dotnet/release-metadata/10.0/releases.json
 util.RELEASE_META_BASE_URL = "https://builds.dotnet.microsoft.com/dotnet/release-metadata"
 util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL .. "/releases-index.json"
 
@@ -29,9 +29,9 @@ util.RELEASE_META_INDEX_URL = util.RELEASE_META_BASE_URL .. "/releases-index.jso
     Installation variants. The suffix is appended to the .NET release version
     to form the version string vfox manages, for example:
 
-        8.0.8             -> full SDK (default, keeps existing installations working)
-        8.0.8-runtime     -> .NET Runtime only
-        8.0.8-aspnetcore  -> ASP.NET Core Runtime (includes the .NET Runtime)
+        10.0.15            -> full SDK (default, keeps existing installations working)
+        10.0.15-runtime    -> .NET Runtime only
+        10.0.15-aspnetcore -> ASP.NET Core Runtime (includes the .NET Runtime)
 
     `field` is the key holding the component inside a release entry of the
     official releases.json metadata. `archives` lists the starts of the file names
@@ -160,7 +160,7 @@ end
 
 --- Split a version string into its .NET version and distribution variant.
 --- Unknown suffixes are left alone and resolve to the default SDK variant.
---- @param versionStr string|nil something like "8", "8.0.8" or "8.0.8-runtime"
+--- @param versionStr string|nil something like "10", "10.0.15" or "10.0.15-runtime"
 --- @return string baseVersion, table variant
 function util:splitVariant(versionStr)
     versionStr = versionStr or ""
@@ -172,8 +172,8 @@ function util:splitVariant(versionStr)
     return versionStr, DEFAULT_VARIANT
 end
 
---- A version is a prefix of another only on a component boundary, so "8.0.3"
---- must not accidentally resolve to "8.0.34".
+--- A version is a prefix of another only on a component boundary, so "10.0.1"
+--- must not accidentally resolve to "10.0.15".
 --- @param candidate string a complete version from the metadata
 --- @param requested string the (possibly partial) version supplied by the user
 --- @return boolean
@@ -309,7 +309,7 @@ local function newestChannelsFirst(channels)
 end
 
 --- get channel version
---- @param userVersion string|nil something like "9" or "9.0.12-runtime", or nil
+--- @param userVersion string|nil something like "10" or "10.0.12-runtime", or nil
 --- @return table channel-info by dotnet
 function util:getAvailableByUserVersion(userVersion)
     local body = fetchJson(util.RELEASE_META_INDEX_URL)
@@ -321,8 +321,8 @@ function util:getAvailableByUserVersion(userVersion)
         local userVersionInfo = util:parseVersion(baseVersion)
 
         local targetChannel = userVersionInfo.channelVersion
-        --- If the user provide "9", make sure targetChannel is "9" but not "9.0"
-        --- so we can get "9.1" if there is one
+        --- If the user provide "10", make sure targetChannel is "10" but not "10.0"
+        --- so we can get "10.1" if there is one
         if userVersionInfo.majorVersion == baseVersion then
             targetChannel = userVersionInfo.majorVersion
         end
@@ -355,7 +355,7 @@ function util:getAvailableByUserVersion(userVersion)
     return result
 end
 
---- Whether a version, without its variant suffix, is a preview such as 9.0.0-rc.2.
+--- Whether a version, without its variant suffix, is a preview such as 10.0.0-rc.2.
 --- @param baseVersion string
 --- @return boolean
 local function isPreview(baseVersion)

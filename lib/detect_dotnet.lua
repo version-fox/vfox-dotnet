@@ -14,7 +14,7 @@
 
 --- Finds .NET SDKs that are already on the machine, for `vfox link --detect dotnet`.
 --- An SDK home is named after the newest runtime it carries, which is the
---- release version `vfox install` uses, such as `8.0.34`.
+--- release version `vfox install` uses, such as `10.0.15`.
 local detect = {}
 
 local function lower(value)
@@ -103,7 +103,7 @@ local function parts(value)
 end
 
 --- Whether version a sorts after version b. A stable part is newer than a
---- prerelease such as `9.0.0-rc.1` at the same numeric position.
+--- prerelease such as `10.0.0-rc.1` at the same numeric position.
 local function newer(a, b)
     local left, right = parts(a), parts(b)
     for i = 1, math.max(#left, #right) do

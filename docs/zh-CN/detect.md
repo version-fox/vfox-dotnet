@@ -31,16 +31,16 @@ vfox 自己管理的路径（`.vfox` 或 `$VFOX_HOME` 下）永远不会被提�
 ## 版本名称
 
 找到的 SDK 会以它携带的最新运行时命名，取自 `shared/Microsoft.NETCore.App` 目录 —— 也就是 `vfox install`
-使用的 .NET 发布版本，例如 `8.0.34`。如果两个目录携带相同的运行时，只提供第一个，这样
-`vfox use dotnet@8.0.34` 只有一个目标。已经安装或已经纳入的条目会被跳过。
+使用的 .NET 发布版本，例如 `10.0.15`。如果两个目录携带相同的运行时，只提供第一个，这样
+`vfox use dotnet@10.0.15` 只有一个目标。已经安装或已经纳入的条目会被跳过。
 
 ## 手动链接
 
 如果 `--detect` 没有扫描到，可以手动指定 SDK 主目录，即包含 `dotnet` 可执行文件、`sdk` 和 `shared` 的目录：
 
 ```
-vfox link dotnet@8.0.34 /opt/dotnet
-vfox use dotnet@8.0.34
+vfox link dotnet@10.0.15 /opt/dotnet
+vfox use dotnet@10.0.15
 ```
 
 只有当该版本已经链接到其他目录时才需要 `vfox link --force`。
