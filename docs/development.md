@@ -38,11 +38,13 @@ the `sdk`, `runtime` and `aspnetcore-runtime` components of the release metadata
 vfox searches that list.
 
 `PreInstall` strips a known variant suffix, parses the remaining version into a
-channel (`8` → `8`, `8.0` → `8.0`, `8.0.34` → `8.0`), fetches only that channel and
-that variant, and resolves an exact version first, then a partial version on
-component boundaries (`8.0.3` does not match `8.0.34`), taking the newest stable
-release among the matches. The `addition` field carries the component version and
-label. vfox verifies the checksum before unpacking.
+channel (`8` → `8`, `8.0` → `8.0`, `8.0.34` → `8.0`), fetches only the channels it
+names and only that variant, and resolves an exact version first, then a partial
+version on component boundaries (`8.0.3` does not match `8.0.34`), taking the
+newest stable release among the matches. A bare major names every channel of that
+major: `2` fetches 2.0, 2.1 and 2.2, sorted newest first because the index lists
+2.1 before 2.2. The `addition` field carries the component version and label.
+vfox verifies the checksum before unpacking.
 
 `resolveVersion` also maps `latest` and an empty version to the newest stable
 release returned by `Available`, or to the newest preview when none is stable.

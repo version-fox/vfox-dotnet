@@ -280,6 +280,26 @@ function util:getAvailableByChannelReleaseUrl(url, variant)
     return result
 end
 
+--- The channel entries of the release index, highest channel version first. The
+--- index lists 2.1 before 2.2, so its own order does not say which channel is newer.
+--- @param channels table channel entries of releases-index.json
+--- @return table a new list ordered by channel version, highest first
+local function newestChannelsFirst(channels)
+    local sorted = {}
+    for _, channel in ipairs(channels) do
+        sorted[#sorted + 1] = channel
+    end
+    table.sort(sorted, function(a, b)
+        local x = util:parseVersion(a["channel-version"])
+        local y = util:parseVersion(b["channel-version"])
+        if x.major ~= y.major then
+            return x.major > y.major
+        end
+        return x.minor > y.minor
+    end)
+    return sorted
+end
+
 --- get channel version
 --- @param userVersion string|nil something like "9" or "9.0.12-runtime", or nil
 --- @return table channel-info by dotnet
@@ -299,18 +319,23 @@ function util:getAvailableByUserVersion(userVersion)
             targetChannel = userVersionInfo.majorVersion
         end
 
+        -- A bare major covers every channel of that major ("2" covers 2.0, 2.1 and
+        -- 2.2); a full channel covers only itself.
+        local matched = {}
         for _, channel in ipairs(releasesIndex) do
             if util:isVersionPrefix(channel["channel-version"], targetChannel) then
-                local inChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"], variant)
-                -- Preallocate space in result table
-                for i = 1, #inChannel do
-                    result[#result + 1] = inChannel[i]
-                end
-                break
+                matched[#matched + 1] = channel
+            end
+        end
+        for _, channel in ipairs(newestChannelsFirst(matched)) do
+            local inChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"], variant)
+            -- Preallocate space in result table
+            for i = 1, #inChannel do
+                result[#result + 1] = inChannel[i]
             end
         end
     else
-        for _, channel in ipairs(releasesIndex) do
+        for _, channel in ipairs(newestChannelsFirst(releasesIndex)) do
             local inChannel = util:getAvailableByChannelReleaseUrl(channel["releases.json"])
             -- Preallocate space in result table
             for i = 1, #inChannel do
